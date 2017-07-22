@@ -1,9 +1,6 @@
+
 *.iml
 *.bat
-grablew
-/local.properties
-/.idea
-.DS_Store
-/build
-/captures
-.externalNativeBuild
+.idea
+/gradlew
+local.properties
