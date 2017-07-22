@@ -1,0 +1,118 @@
+package com.androidtecknowlogy.tym.cast.cast.model;
+
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.res.Resources;
+import android.util.Log;
+
+import com.androidtecknowlogy.tym.cast.faces.Constant;
+import com.androidtecknowlogy.tym.cast.app.AppController;
+import com.androidtecknowlogy.tym.cast.helper.pojo.CastItems;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.Map;
+
+/**
+ * Created by AGBOMA franklyn on 6/25/17.
+ */
+
+public class ItemsModel {
+
+    private final String LOG_TAG = ItemsModel.class.getSimpleName();
+
+    private Constant.ItemModelToPresenter itemModelToPresenter;
+    private Context context;
+    private ValueEventListener valueEventListener;
+    private ProgressDialog loading;
+
+    public ItemsModel(Context context) {
+        //progress dialog
+        this.context = context;
+        loading = new ProgressDialog(this.context);
+        loading.setCancelable(false);
+    }
+
+    private void showProgress(String title,String message) {
+        loading.setTitle(title);
+        loading.setMessage(message);
+        loading.show();
+    }
+    private void stopProgress(){
+        Log.i(LOG_TAG, "Progress stop");
+        if(loading.isShowing())
+            loading.dismiss();
+    }
+
+    public void setModelToPresenter(Constant.ItemModelToPresenter itemModelToPresenter) {
+        this.itemModelToPresenter = itemModelToPresenter;
+    }
+
+    public void attachedDataListener() {
+        //showProgress("Cast","Loading....");
+
+        if(valueEventListener == null) {
+            valueEventListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if(dataSnapshot != null) {
+
+                        for(DataSnapshot dataSnap : dataSnapshot.getChildren()) {
+                            Object obj = dataSnap.getValue();
+
+                            //get the cast items
+                            if(obj instanceof Map) {
+                                Log.e(LOG_TAG, "obj Cast");
+                                //store castItems in list
+                                CastItems castItems = dataSnap.getValue(CastItems.class);
+                                Log.e(LOG_TAG, "From fire base " + castItems.getCastName());
+                                AppController.detailsCastItems.add(castItems);
+                                Log.e(LOG_TAG, "ArrayListSize " + AppController.detailsCastItems.size());
+                            }
+                            //get the admin items
+                            else if(obj instanceof String) {
+                                Log.e(LOG_TAG, "obj String");
+                                String admins = dataSnap.getValue(String.class);
+                                Log.e(LOG_TAG, admins + " hit server and added");
+                            }
+                        }
+                        //dismiss dialog.
+                        //stopProgress();
+                        setRecylerView();
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    //dismiss dialog.
+                    //stopProgress();
+                }
+            };
+            AppController.castsData.addValueEventListener(valueEventListener);
+            AppController.adminsData.addValueEventListener(valueEventListener);
+        }
+    }
+
+    public void detachDataListener() {
+        if(valueEventListener != null) {
+            AppController.castsData.removeEventListener(valueEventListener);
+            AppController.adminsData.removeEventListener(valueEventListener);
+        }
+        valueEventListener = null; //set back to null
+        /**
+         * recyclerView  = false
+         * The Application is on pause
+         */
+        itemModelToPresenter.recyclerView(false);
+    }
+    private void setRecylerView() {
+        //reload cast adapter
+        Log.e(LOG_TAG, "Another ArrayListSize " + AppController.detailsCastItems.size());
+        itemModelToPresenter.recyclerView(true);
+    }
+    public void getPosition(int itemPosition, int position) {
+        itemModelToPresenter.positionDetails(itemPosition,
+                AppController.detailsCastItems.get(position));
+    }
+}

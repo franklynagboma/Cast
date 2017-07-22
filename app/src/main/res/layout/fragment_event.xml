@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/event_card"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:layout_margin="2dp"
+    app:cardBackgroundColor="@android:color/white"
+    app:cardElevation="5dp">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white_tin"
+            android:padding="10dp">
+            <FrameLayout
+                android:id="@+id/image_holder"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/circular_frame_green">
+                <ImageView
+                    android:id="@+id/cast_image"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:scaleType="centerCrop"
+                    android:src="@mipmap/ic_cast_person"
+                    android:padding="4dp" />
+            </FrameLayout>
+            <TextView
+                android:id="@+id/cast_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_toRightOf="@+id/image_holder"
+                android:layout_toEndOf="@+id/image_holder"
+                android:alpha="0.9"/>
+            <ImageView
+                android:id="@+id/add_event"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:contentDescription="@string/action_new_event"
+                android:padding="4dp"
+                android:background="?attr/selectableItemBackground"
+                android:src="@drawable/ic_add_black_24dp" />
+        </RelativeLayout>
+        <View
+            android:id="@+id/event_view"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/black_gone" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <!--progressBar load-->
+            <ProgressBar
+                android:id="@+id/circular_progress_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminate="false"
+                android:layout_centerInParent="true"
+                android:visibility="gone"/>
+            <ListView
+                android:id="@+id/events_lists"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:dividerHeight="1dp"
+                android:divider="@android:color/transparent" />
+        </RelativeLayout>
+
+    </LinearLayout>
+</android.support.v7.widget.CardView>

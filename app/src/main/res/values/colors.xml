@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#9C27B0</color>
+    <color name="colorPrimaryDark">#6A1B9A</color>
+    <color name="colorAccent">#2196F3</color>
+    <color name="liteAccent">#402196F3</color>
+    <color name="number_code">#D9EDEDED</color>
+    <color name="cast_background">#383745</color>
+    <color name="card_color">#E0F2F1</color>
+    <color name="card_gone">#1AFFFFFF</color>
+    <color name="view_gone">#0DFFFFFF</color>
+    <color name="black_gone">#26000000</color>
+    <!--<color name="white_tin">#8CFFFFFF</color>-->
+    <color name="white_tin">#D9EDEDED</color>
+    <color name="item_color">#EDEDED</color>
+    <color name="black_tin">#99000000</color>
+    <color name="fab_dark_view">#CCBDBDBD</color>
+    <color name="yellow">#FFEB3B</color>
+    <color name="brown">#795548</color>
+</resources>
