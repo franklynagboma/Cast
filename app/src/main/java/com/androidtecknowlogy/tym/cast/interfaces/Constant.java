@@ -43,7 +43,7 @@ public interface Constant {
     interface CompleteSignUpToPresenter {
         void userSignUp(String uId, String photo, String email, String gender, EditText mobile,
                         EditText sunName, EditText otherNames, EditText title, EditText password,
-                        EditText confirmPassword, Context context);
+                        EditText confirmPassword, EditText dob, EditText summary, Context context);
     }
 
     /**
@@ -59,7 +59,8 @@ public interface Constant {
      */
     interface PresenterSendSignUpToModel {
         void signUpInfo(String uId, String photo, String email, String gender,  String month_year,
-                        String name, String mobile, String title, String password, Context context);
+                        String name, String mobile, String title, String password,
+                        String dob, String summary, Context context);
     }
 
     /**
@@ -74,7 +75,7 @@ public interface Constant {
      */
     interface PresenterSendToCastDetailsFragment{
         void details(int itemPosition, String photo, String email, String gender,  String month_year,
-                     String name, String mobile, String title);
+                     String name, String mobile, String title, String dob, String summary);
     }
 
 

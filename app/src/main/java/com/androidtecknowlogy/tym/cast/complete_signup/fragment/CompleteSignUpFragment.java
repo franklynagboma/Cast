@@ -5,29 +5,39 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatRadioButton;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.androidtecknowlogy.tym.cast.R;
 import com.androidtecknowlogy.tym.cast.cast.activity_view.CastActivity;
 import com.androidtecknowlogy.tym.cast.faces.Constant;
+import com.androidtecknowlogy.tym.cast.helper.io.CustomCalendar;
+import com.androidtecknowlogy.tym.cast.helper.io.CustomDataFormat;
 import com.androidtecknowlogy.tym.cast.helper.view.CircularTransform;
 import com.androidtecknowlogy.tym.cast.helper.io.CustomTextWatcher;
 import com.squareup.picasso.Picasso;
+
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -55,8 +65,16 @@ public class CompleteSignUpFragment extends Fragment implements GoogleSignInActi
     public final String PASSWORD_ID = "password";
     public final String CONFIRM_ID = "confirm";
     public final String RADIO_ID = "radio";
+    public final String DOB_ID = "dob";
+    public final String SUMMARY_ID = "summary";
+    private String getDateFromView = "";
+    private String[] monthReadable = {"Jan", "Feb", "Mar", "Apr", "May",
+            "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
     //get views
+    @BindView(R.id.cast_image)
+    ImageView castImage;
+
     @BindView(R.id.complete_sign_up)
     TextView completeText;
 
@@ -93,6 +111,16 @@ public class CompleteSignUpFragment extends Fragment implements GoogleSignInActi
     @BindView(R.id.input_confirm)
     TextInputLayout inputConfirm;
 
+    @BindView(R.id.img_calendar)
+    ImageView imgCalendar;
+    @BindView(R.id.cast_dob)
+    EditText userDob;
+
+    @BindView(R.id.input_summary)
+    TextInputLayout inputSummary;
+    @BindView(R.id.cast_summary)
+    EditText userSummary;
+
     RadioGroup rg;
     @BindView(R.id.rb_male)
     AppCompatRadioButton rbMale;
@@ -100,8 +128,6 @@ public class CompleteSignUpFragment extends Fragment implements GoogleSignInActi
     AppCompatRadioButton rbFemale;
     @BindView(R.id.send_complete_sign_up)
     Button sendButton;
-    @BindView(R.id.cast_image)
-    ImageView castImage;
 
 
     private Constant.CompleteSignUpToPresenter completeSignUpToPresenter;
@@ -154,6 +180,8 @@ public class CompleteSignUpFragment extends Fragment implements GoogleSignInActi
             userTitle.setText(savedInstanceState.getString(TITLE_ID));
             userEventPassword.setText(savedInstanceState.getString(PASSWORD_ID));
             userEventPasswordConfirm.setText(savedInstanceState.getString(CONFIRM_ID));
+            userDob.setText(savedInstanceState.getString(DOB_ID));
+            userSummary.setText(savedInstanceState.getString(SUMMARY_ID));
             int getRadio = savedInstanceState.getInt(RADIO_ID);
             if(getRadio > -1) {
                 if(getRadio == rbMale.getId())
@@ -171,6 +199,8 @@ public class CompleteSignUpFragment extends Fragment implements GoogleSignInActi
         outState.putString(TITLE_ID, userTitle.getText().toString());
         outState.putString(PASSWORD_ID, userEventPassword.getText().toString());
         outState.putString(CONFIRM_ID, userEventPasswordConfirm.getText().toString());
+        outState.putString(DOB_ID, userDob.getText().toString());
+        outState.putString(SUMMARY_ID, userSummary.getText().toString());
         outState.putInt(RADIO_ID, rbId);
     }
 
@@ -181,8 +211,8 @@ public class CompleteSignUpFragment extends Fragment implements GoogleSignInActi
     }
 
     private void init() {
-
         completeText.setPaintFlags(completeText.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+
         rg = (RadioGroup) view.findViewById(R.id.rg);
         rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -191,9 +221,11 @@ public class CompleteSignUpFragment extends Fragment implements GoogleSignInActi
                 Log.i(LOG_TAG, "rbId " + rbId);
             }
         });
-        //userMobile = (EditText) view.findViewById(R.id.users_mobile);
+
         //users are not allowed to edit their emails got form google.
         userEmail.setEnabled(false);
+        userDob.setEnabled(false);
+        isNotEmpty();
         userSunName.addTextChangedListener(new CustomTextWatcher(inputSunName, SUN_NAME_ID));
         userOtherNames.addTextChangedListener(new CustomTextWatcher(inputOtherNames, OTHER_NAME_ID));
         userMobile.addTextChangedListener(new CustomTextWatcher(inputMobile, MOBILE_ID));
@@ -202,9 +234,74 @@ public class CompleteSignUpFragment extends Fragment implements GoogleSignInActi
                 (inputPassword, PASSWORD_ID));
         userEventPasswordConfirm.addTextChangedListener(new CustomTextWatcher
                 (inputConfirm, CONFIRM_ID));
+        userDob.addTextChangedListener(new CustomTextWatcher(userDob,DOB_ID));
+        userSummary.addTextChangedListener(new CustomTextWatcher(inputSummary, SUMMARY_ID));
 
     }
 
+    private void isNotEmpty() {
+        //check if it is empty, set invisible is true else set visible.
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //delay a little to add animation effect on visibility.
+                userDob.setVisibility(userDob.getText().toString().isEmpty()
+                        ?View.INVISIBLE :View.VISIBLE);
+            }
+        }, 500);
+    }
+
+    @OnClick(R.id.img_calendar)
+    public void onImgCalendarCliced() {
+        //getSystemService on inflater.
+        LayoutInflater layoutInflater = (LayoutInflater)
+                context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        //get resource views.
+        View calendarView = layoutInflater.inflate(R.layout.calendar_layout, null, false);
+
+        CustomCalendar calendar = (CustomCalendar)
+                calendarView.findViewById(R.id.calender_picker);
+        //set initial data format
+        getDateFromView = new CustomDataFormat().getDateFormat(new Date(calendar.getDate()),
+                "m/d/y");
+        //get data format form users if changed.
+        calendar.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+            @Override
+            public void onSelectedDayChange(@NonNull CalendarView view,
+                                            int year, int month, int dayOfMonth) {
+                //get month as string
+                getDateFromView = monthReadable[month] +" " +dayOfMonth +", " + year;
+            }
+        });
+
+        MaterialDialog.Builder dialog = new MaterialDialog.Builder(context);
+        dialog.customView(calendarView, true);
+
+        dialog.positiveText("Set DOB")
+                .positiveColor(getResources().getColor(R.color.colorAccent))
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog,
+                                        @NonNull DialogAction which) {
+                        userDob.setText(getDateFromView);
+                        dialog.dismiss();
+                        isNotEmpty();
+                    }
+                });
+        dialog.negativeText("Discard")
+                .negativeColor(getResources().getColor(R.color.colorAccent))
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog,
+                                        @NonNull DialogAction which) {
+                        dialog.dismiss();
+                    }
+                });
+
+        //show material dialog view to get user details to add.
+        MaterialDialog builder = dialog.build();
+        builder.show();
+    }
 
     @OnClick(R.id.send_complete_sign_up)
     public void onSendButtonClicked() {
@@ -220,7 +317,7 @@ public class CompleteSignUpFragment extends Fragment implements GoogleSignInActi
         //set field to presenter
         completeSignUpToPresenter.userSignUp(uId, photo, email, gender,
                 userMobile,userSunName, userOtherNames,
-                userTitle, userEventPassword, userEventPasswordConfirm, context);
+                userTitle, userEventPassword, userEventPasswordConfirm, userDob, userSummary, context);
     }
 
     @Override
@@ -261,26 +358,23 @@ public class CompleteSignUpFragment extends Fragment implements GoogleSignInActi
         //check if it was error message
         if(getLength >1) {
             Log.i(LOG_TAG, "getMessage " + getMessage[0]);
-            if(getMessage[0].equals("password")) {
-                Toast.makeText(context, getMessage[1], Toast.LENGTH_SHORT).show();
-            }
-            else if(getMessage[0].equals("empty")) {
-                Toast.makeText(context, getMessage[1], Toast.LENGTH_SHORT).show();
-            }
+            Toast.makeText(context, getMessage[1], Toast.LENGTH_SHORT).show();
         }
         else if(getLength == 1) {
-
-            //start next Activity
             if(message.equals("error"))
                 Toast.makeText(context, "network error try again", Toast.LENGTH_SHORT).show();
             else {
-                getActivity().finish();
+                //split "." out of message
+                getMessage = message.split("\\?");
                 //save preference.
                 prefEdit = pref.edit();
                 prefEdit.putBoolean(Intent.EXTRA_TEXT, true);
-                prefEdit.putString("name", message);
+                prefEdit.putString("name", getMessage[0]);
                 prefEdit.putString("image", photo);
+                prefEdit.putString("password", getMessage[1]);
                 prefEdit.apply();
+                getActivity().finish();
+                //start next Activity
                 startActivity(new Intent(getActivity(), CastActivity.class));
             }
         }
