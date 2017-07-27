@@ -4,21 +4,30 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.androidtecknowlogy.tym.cast.R;
-import com.androidtecknowlogy.tym.cast.faces.Constant;
+import com.androidtecknowlogy.tym.cast.helper.pojo.CastItems;
+import com.androidtecknowlogy.tym.cast.interfaces.Constant;
 import com.androidtecknowlogy.tym.cast.cast.presenter.ItemsPresenter;
 import com.androidtecknowlogy.tym.cast.app.AppController;
 import com.androidtecknowlogy.tym.cast.helper.adpater.RecyclerItemAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -27,7 +36,8 @@ import butterknife.ButterKnife;
  * Created by AGBOMA franklyn on 6/26/17.
  */
 
-public class ItemsFragment extends Fragment implements Constant.PresenterCallsItemRecyclerView{
+public class ItemsFragment extends Fragment implements Constant.PresenterCallsItemRecyclerView,
+        SearchView.OnQueryTextListener{
 
     private final String LOG_TAG = ItemsFragment.class.getSimpleName();
     private Constant.ItemsSendItemPositionToPresenter itemPositionToPresenter;
@@ -84,10 +94,53 @@ public class ItemsFragment extends Fragment implements Constant.PresenterCallsIt
         isTab = context.getResources().getBoolean(R.bool.isTab);
         orientation = getResources().getConfiguration().smallestScreenWidthDp;
 
-        itemAdapter = new RecyclerItemAdapter(context, isTab,
-                itemPositionToPresenter, detailsFragmentScreen);
+        itemAdapter = new RecyclerItemAdapter(context, AppController.detailsCastItems,
+                isTab, itemPositionToPresenter, detailsFragmentScreen);
         return view;
     }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_search, menu);
+        //this will give null so to avoid, setHasOptionsMenu(true) in onViewCreated.
+        MenuItem menuItem = menu.findItem(R.id.action_search);
+        SearchView searchView  = (SearchView) MenuItemCompat.getActionView(menuItem);
+        searchView.setQueryHint("By name...");
+        searchView.setOnQueryTextListener(this);
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String query) {
+        //itemAdapter.getFilter().filter(query);
+        query = query.toLowerCase();
+        Log.i(LOG_TAG, "Previous is empty: " + AppController.detailsCastItems.isEmpty()
+                + " Size: " + AppController.detailsCastItems.size());
+        List<CastItems> castItems = new ArrayList<>();
+        for(CastItems cast : AppController.detailsCastItems) {
+
+            String getName = cast.getCastName().toLowerCase();
+            //get the search item on a list
+            if(getName.contains(query))
+                castItems.add(cast);
+        }
+        Log.i(LOG_TAG, "castItems is empty = " + castItems.isEmpty());
+        //itemAdapter.setFilter(!castItems.isEmpty() ? castItems : AppController.detailsCastItems);
+        itemAdapter.setFilter(castItems);
+        return true;
+
+    }
+
 
     public void setItemPositionToPresenter(Constant.ItemsSendItemPositionToPresenter
                                                    itemPositionToPresenter) {
@@ -109,7 +162,7 @@ public class ItemsFragment extends Fragment implements Constant.PresenterCallsIt
     public void onPause() {
         super.onPause();
         //arguments = 0-> for null int and false -> not to allow click
-        itemPositionToPresenter.positionItemFragment(0,0, false);
+        itemPositionToPresenter.positionItemFragment(null,0,0, false);
         Log.i(LOG_TAG, "onPause detached listener");
     }
 
@@ -118,7 +171,7 @@ public class ItemsFragment extends Fragment implements Constant.PresenterCallsIt
         Log.e(LOG_TAG, "set view");
         setProgressBar(true);
         //set model data listener
-        itemPositionToPresenter.positionItemFragment(0,1, false);
+        itemPositionToPresenter.positionItemFragment(null,0,1, false);
         Log.i(LOG_TAG, "onResume attached listener");
         if(!isTab)
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
@@ -129,6 +182,7 @@ public class ItemsFragment extends Fragment implements Constant.PresenterCallsIt
             else
                 recyclerView.setLayoutManager(new GridLayoutManager(context, 2));
         }
+        recyclerView.setHasFixedSize(true);
         //set Recycler adapter
         recyclerView.setAdapter(itemAdapter);
     }

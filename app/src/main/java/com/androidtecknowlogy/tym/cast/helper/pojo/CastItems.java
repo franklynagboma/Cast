@@ -7,14 +7,14 @@ package com.androidtecknowlogy.tym.cast.helper.pojo;
 public class CastItems {
 
     private String castImage, castName, castTitle, castGender,
-            castMobile,castEmail,castSummary, castPassword, castJoined;
+            castMobile,castEmail,castSummary, castPassword,  castDob, castJoined;
 
     public CastItems() {
     }
 
     public CastItems(String castImage, String castName, String castTitle,
                      String castGender, String castMobile, String castEmail,
-                     String castSummary, String castPassword,String castJoined) {
+                     String castSummary, String castPassword, String castDob, String castJoined) {
         this.castImage = castImage;
         this.castName = castName;
         this.castTitle = castTitle;
@@ -23,6 +23,7 @@ public class CastItems {
         this.castEmail = castEmail;
         this.castSummary = castSummary;
         this.castPassword = castPassword;
+        this.castDob = castDob;
         this.castJoined = castJoined;
     }
 
@@ -88,6 +89,14 @@ public class CastItems {
 
     public void setCastPassword(String castPassword) {
         this.castPassword = castPassword;
+    }
+
+    public String getCastDob() {
+        return castDob;
+    }
+
+    public void setCastDob(String castDob) {
+        this.castDob = castDob;
     }
 
     public String getCastJoined() {

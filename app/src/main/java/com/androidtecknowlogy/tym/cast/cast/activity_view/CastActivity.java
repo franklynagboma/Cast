@@ -1,33 +1,38 @@
 package com.androidtecknowlogy.tym.cast.cast.activity_view;
 
-import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v7.app.AlertDialog;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.androidtecknowlogy.tym.cast.R;
+import com.androidtecknowlogy.tym.cast.complete_signup.fragment.CompleteSignUpFragment;
+import com.androidtecknowlogy.tym.cast.helper.view.CustomBottomNavigationView;
+import com.androidtecknowlogy.tym.cast.login.LoginActivity;
 import com.androidtecknowlogy.tym.cast.cast.presenter.EventsPresenter;
 import com.androidtecknowlogy.tym.cast.cast.presenter.ItemsPresenter;
-import com.androidtecknowlogy.tym.cast.app.AppController;
 import com.androidtecknowlogy.tym.cast.cast.fragment_view.DetailsFragment;
 import com.androidtecknowlogy.tym.cast.cast.fragment_view.EventFragment;
 import com.androidtecknowlogy.tym.cast.cast.fragment_view.ItemsFragment;
+import com.androidtecknowlogy.tym.cast.complete_signup.activity_view.GoogleSignInActivity;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
@@ -36,7 +41,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Optional;
 
-public class CastActivity extends AppCompatActivity implements ItemsFragment.DynamicFragment{
+public class CastActivity extends AppCompatActivity implements ItemsFragment.DynamicFragment,
+        CompleteSignUpFragment.KnowActivity{
 
     private final String LOG_TAG = CastActivity.class.getSimpleName();
 
@@ -49,10 +55,16 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
     public static final String GENDER = "gender";
     public static final String SUMMARY = "summary";
 
+    private SharedPreferences pref;
+    private SharedPreferences.Editor prefEdit;
     public static int orientation;
+    private CustomBottomNavigationView bottomNavigationView;
+    //private BottomNavigationView bottomNavigationView;
     public final static String CAST_ITEM = "cast_item";
     private static final String EVENT_FRAG = "event_frag";
     private final String DETAILS_FRAG = "detail_fragment";
+    private boolean profile_details_fragment;
+    public final static String COMPLETE = "complete";
     private String FRAG = "";
     private String pauseFrag;
     private String getInstanceState;
@@ -76,13 +88,25 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
     @BindView(R.id.fab_menu)
     FloatingActionsMenu fabMenu;
     @Nullable
-    @BindView(R.id.fab_events)
-    FloatingActionButton fabEvents;
+    @BindView(R.id.fab_profile)
+    FloatingActionButton fabProfile;
+    @Nullable
+    @BindView(R.id.fab_cast)
+    FloatingActionButton fabCast;
     @Nullable
     @BindView(R.id.fab_settings)
     FloatingActionButton fabSettings;
+    @Nullable
+    @BindView(R.id.cast_details_fragment)
+    FrameLayout detailsFrame;
+    //FrameLayout detailsFrame;
 
-
+    private CastUserToDetailFragment castUserToDetailFragment;
+    public interface CastUserToDetailFragment {
+        void CastSendUsersToDetailFragment(String image, String name, String title,
+                                           String dob, String gender, String mobile,
+                                           String email, String summary);
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,11 +115,12 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
 
         setContentView(R.layout.activity_cast);
         ButterKnife.bind(this);
+        pref = PreferenceManager.getDefaultSharedPreferences(this);
 
         //Fragment is dynamic,
         itemsFragment = new ItemsFragment();
         detailsFragment = new DetailsFragment();
-        eventFragment = new EventFragment();
+        //eventFragment = new EventFragment();
 
         //invalidateOptionsMenu(); this is mostly used to redraw menu item.
         //always add a delay after for menu to be redraw on ActionBar.
@@ -122,14 +147,13 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
 
         //DetailsFragment
         itemsPresenter.setPresenterToDetailsFragment(detailsFragment);
+        //set up cast interface to detailsFragment
+        setCastUserToDetailFragment(detailsFragment);
 
         //EventsFragment
-        eventsPresenter = new EventsPresenter(this);
+        /*eventsPresenter = new EventsPresenter(this);
         eventFragment.setAddEventsDetailsToPresenter(eventsPresenter);
-        eventsPresenter.setPresenterEventsLogicToEventFragment(eventFragment);
-
-
-        //fabMenuClick = true; //default fab layout to allow fab expansion.
+        eventsPresenter.setPresenterEventsLogicToEventFragment(eventFragment);*/
 
 
     }
@@ -144,9 +168,9 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
 
         setSupportActionBar(toolbar);
 
-        BottomNavigationView bottomNavigationView = (BottomNavigationView)
+        bottomNavigationView = (CustomBottomNavigationView)
                 findViewById(R.id.bottom_nav);
-        if(bottomNavigationView != null) {
+        if(!isTab) {
 
             bottomNavigationView.setOnNavigationItemSelectedListener(
                     new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -155,18 +179,19 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
 
                             switch (item.getItemId()) {
                                 case R.id.action_cast:
-                                    Log.e(LOG_TAG, "nav cast clicked");
-                                    getSupportFragmentManager().beginTransaction()
-                                            .replace(R.id.cast_item_screen, itemsFragment,
-                                                    CAST_ITEM)
-                                            .commit();
+                                    //call ItemFragment.
+                                    castCallsItemFragment(R.id.cast_item_screen);
                                     break;
-                                case R.id.action_event:
+                                case R.id.action_profile:
+                                    //call CompleteSignUpFragment.
+                                    profileCallsDetailsFragment();
+                                    break;
+                                /*case R.id.action_event:
                                     Log.e(LOG_TAG, "nav event clicked");
                                     getSupportFragmentManager().beginTransaction()
                                             .replace(R.id.cast_item_screen, eventFragment, EVENT_FRAG)
                                             .commit();
-                                    break;
+                                    break;*/
                                 case R.id.action_settings:
                                     Log.e(LOG_TAG, "nav settings clicked");
                                     break;
@@ -176,13 +201,87 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
                         }
                     });
         }
+    }
 
-        /*fabEditButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //dialogUploader();
-            }
-        });*/
+    private void castCallsItemFragment(int res) {
+        //check if it from tab then, hide the detail fragment
+        //detailsFrame = (FrameLayout) findViewById(R.id.cast_details_fragment);
+        if(isTab)
+            detailsFrame.setVisibility(View.VISIBLE);
+        if(getSupportFragmentManager().findFragmentByTag(CAST_ITEM) == null )
+            getSupportFragmentManager().beginTransaction()
+                    .replace(res, itemsFragment,
+                            CAST_ITEM).commit();
+    }
+
+    public void setCastUserToDetailFragment(CastUserToDetailFragment castUserToDetailFragment) {
+        this.castUserToDetailFragment = castUserToDetailFragment;
+    }
+
+    private void profileCallsDetailsFragment() {
+        //call detailsFragment for mobile devices.
+        profile_details_fragment = true;
+        if(!isTab)
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.cast_item_screen, detailsFragment)
+                    .commit();
+        else
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.cast_details_fragment, detailsFragment)
+                    .commit();
+
+        //send details to details fragment
+        castUserToDetailFragment.CastSendUsersToDetailFragment(pref.getString("image", ""),
+                pref.getString("name", ""), pref.getString("title", ""),
+                pref.getString("dob", ""),pref.getString("gender", ""),
+                pref.getString("mobile", ""), pref.getString("email", ""),
+                pref.getString("summary","") );
+    }
+    private void editCallsCompleteSignUpFragment(int res){
+        profile_details_fragment = false;
+        //send bundle to fragment to hide passwords text field.
+        //firstly, clear arguments
+        CompleteSignUpFragment completeSignUpFragment = new CompleteSignUpFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("password", pref.getString("password", ""));
+        bundle.putString("uid", pref.getString("uid", ""));
+        bundle.putString("name", pref.getString("name", ""));
+        bundle.putString("image", pref.getString("image", ""));
+        bundle.putString("email", pref.getString("email", ""));
+        bundle.putString("mobile", pref.getString("mobile", ""));
+        bundle.putString("dob", pref.getString("dob", ""));
+        bundle.putString("gender", pref.getString("gender", ""));
+        bundle.putString("title", pref.getString("title", ""));
+        bundle.putString("summary", pref.getString("summary",""));
+        completeSignUpFragment.setArguments(bundle);
+        //check if it from tab then, hide the detail fragment
+        //detailsFrame = (FrameLayout) findViewById(R.id.cast_details_fragment);
+        if(isTab)
+            detailsFrame.setVisibility(View.GONE);
+        if(getSupportFragmentManager().findFragmentByTag(COMPLETE) == null)
+            getSupportFragmentManager().beginTransaction()
+                    .replace(res, completeSignUpFragment,
+                            COMPLETE).commit();
+    }
+
+    @Override
+    public void activity() {
+        //activity bottom nav cast item for mobile while call cast item with detail visible
+        Log.i(LOG_TAG, "activity called");
+        //check if mobile then, activity cast item page.
+        Log.i(LOG_TAG, "bottomNav null = " + (bottomNavigationView == null));
+        /**
+         * if mobile activity cast bottom nav
+         * else make detail visible and replace fragment container with itemsFragment
+         */
+        if(!isTab)
+            bottomNavigationView.findViewById(R.id.action_cast).performClick();
+        else {
+            detailsFrame.setVisibility(View.VISIBLE);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.cast_item_screen, itemsFragment,
+                            CAST_ITEM).commit();
+        }
     }
 
     private void logCall(String logMessage) {
@@ -191,31 +290,50 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
     /**
      * For Tab Fragment navigation
      */
-    //events clicked
+    //cast clicked
     @Optional
-    @OnClick(R.id.fab_events)
-    public void fabEventsClicked() {
+    @OnClick(R.id.fab_cast)
+    public void fabCastClicked() {
         //collapse fab menu
         fabMenu.collapse();
         //delay to exit fab layout.
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                fabLayoutVisibility("events clicked");
+                fabLayoutVisibility();
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        //delay to load next fragment
-                        getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.cast_details_fragment, eventFragment, EVENT_FRAG)
-                                .commit();
+                        //delay to load.
+                        castCallsItemFragment(R.id.cast_item_screen);
                     }
                 },50);
             }
         }, 100);
 
     }
+    //events clicked
+    @Optional
+    @OnClick(R.id.fab_profile)
+    public void fabEditClicked() {
+        //collapse fab menu
+        fabMenu.collapse();
+        //delay to exit fab layout.
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                fabLayoutVisibility();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        //delay to load.
+                        profileCallsDetailsFragment();
+                    }
+                },50);
+            }
+        }, 100);
 
+    }
     //settings clicked
     @Optional
     @OnClick(R.id.fab_settings)
@@ -226,7 +344,7 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                fabLayoutVisibility("settings clicked");
+                fabLayoutVisibility();
                 //delay to load next fragment
                 new Handler().postDelayed(new Runnable() {
                     @Override
@@ -238,50 +356,9 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
         }, 100);
 
     }
-    private void fabLayoutVisibility(String message) {
-        logCall(message);
+    private void fabLayoutVisibility() {
         fabLayout.setVisibility(fabLayout.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
     }
-
-    /*private void dialogUploader() {
-        final AlertDialog.Builder uploader = new AlertDialog.Builder(this);
-        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog, null, false);
-        final EditText adminText = (EditText) dialogView.findViewById(R.id.admin_text);
-        //add text watcher to this text to check error.
-        uploader.setTitle("Add Admin")
-                .setView(adminText)
-                .setPositiveButton("Add", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        String adminEmail = adminText.getText().toString().trim();
-                        if(!TextUtils.isEmpty(adminEmail)) {
-                            if(!adminEmail.contains("@") || !adminEmail.contains(".")
-                                    || adminEmail.contains(" "))
-                                adminText.setError("Invalid email");
-                            else {
-                                dialogInterface.dismiss();
-                                //call loading dialog
-                                *//*loading.setMessage(adminEmail + " adding...");
-                                loading.show();*//*
-                                //add admin email to database
-                                AppController.adminsData.push().setValue(adminEmail);
-                            }
-                        }
-                        else
-                            adminText.setError("Invalid email");
-                    }
-                })
-                .setNegativeButton("Discard", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                });
-        AlertDialog builder = uploader.create();
-        builder.setCancelable(false);
-        builder.show();
-    }*/
-
 
     @Override
     protected void onStart() {
@@ -292,19 +369,6 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        /*getInstanceState = savedInstanceState.getString(FRAG);
-        Log.i(LOG_TAG, "onRestoreInstanceState " +getInstanceState);
-        //present view to the user from savedInstanceState
-        if(null != getInstanceState) {
-            if(getInstanceState.equals(CAST_ITEM))
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.cast_item_screen, itemsFragment, CAST_ITEM)
-                        .commit();
-            else if(getInstanceState.equals(DETAILS_FRAG))
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.cast_item_screen, detailsFragment, DETAILS_FRAG)
-                        .commit();
-        }*/
     }
 
     @Override
@@ -313,12 +377,12 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
         init();
         Log.e(LOG_TAG, "onResume");
         //call back paused Fragment.
-        if(!isTab) {
+        /*if(!isTab) {
             if(FRAG.equals(EVENT_FRAG))
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.cast_item_screen, eventFragment, EVENT_FRAG)
                         .commit();
-        }
+        }*/
 
         if(isTab) {
             //check if fabProcess is false then make true for AsyncTask
@@ -346,12 +410,12 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
     protected void onPause() {
         super.onPause();
         Log.e(LOG_TAG, "onPause");
-        if(!isTab) {
+        /*if(!isTab) {
             if(getSupportFragmentManager().findFragmentByTag(EVENT_FRAG)
                     != null && getSupportFragmentManager().findFragmentByTag(EVENT_FRAG)
                     .isVisible())
                 FRAG = EVENT_FRAG;
-        }
+        }*/
 
         if(null != fabLayoutProcess)
             fabLayoutProcess.cancel(true);
@@ -395,31 +459,16 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
      */
     @Override
     public void changeToDetailsFragment() {
+        profile_details_fragment = true;
         if(!isTab)
             getSupportFragmentManager().beginTransaction()
-                .replace(R.id.cast_item_screen, detailsFragment, DETAILS_FRAG)
-                .commit();
+                    .replace(R.id.cast_item_screen, detailsFragment, DETAILS_FRAG)
+                    .commit();
         else
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.cast_details_fragment, detailsFragment, DETAILS_FRAG)
                     .commit();
-        //fabEditVisibility();
     }
-
-    /*private void fabEditVisibility(){
-        if(getSupportFragmentManager().findFragmentByTag(DETAILS_FRAG) != null
-                && getSupportFragmentManager().findFragmentByTag(DETAILS_FRAG).isVisible()) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    //delay before show
-                    fabEditButton.setVisibility(View.VISIBLE);
-                }
-            }, 1000);
-        }
-        else
-            fabEditButton.setVisibility(View.GONE);
-    }*/
 
     @Override
     public void onBackPressed() {
@@ -430,7 +479,6 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.cast_item_screen, itemsFragment, CAST_ITEM)
                         .commit();
-                //fabEditVisibility();
             }
             else
                 this.finish();
@@ -443,7 +491,14 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_cast, menu);
+        //get menu item for edit and hide if not on person detail
+        MenuItem menuItem = menu.findItem(R.id.action_edit);
+        if(!profile_details_fragment)
+            menuItem.setVisible(false);
+        else
+            menuItem.setVisible(true);
         //inflate menu share
+
         return true;
     }
 
@@ -456,15 +511,30 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
 
         //noinspection SimplifiableIfStatement
         switch (id) {
-            case R.id.edit_details:
+            case R.id.action_edit:
                 Log.i(LOG_TAG, "edit menu");
+                editCallsCompleteSignUpFragment(R.id.cast_item_screen);
                 return true;
-            case R.id.sign_out:
-                Log.i(LOG_TAG, "sign out menu");
+            case R.id.action_logout:
+                Log.i(LOG_TAG, "logout menu");
+                logOut();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void logOut() {
+        openGoogleSignInActivity("logout");
+    }
+    private void openGoogleSignInActivity(String msg) {
+        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+        //save login to false
+        prefEdit = pref.edit();
+        prefEdit.putBoolean("login", false);
+        prefEdit.apply();
+        this.finish();
+        startActivity(new Intent(CastActivity.this, LoginActivity.class));
     }
 
 

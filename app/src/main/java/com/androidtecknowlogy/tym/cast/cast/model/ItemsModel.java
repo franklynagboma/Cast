@@ -2,16 +2,16 @@ package com.androidtecknowlogy.tym.cast.cast.model;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.res.Resources;
 import android.util.Log;
 
-import com.androidtecknowlogy.tym.cast.faces.Constant;
+import com.androidtecknowlogy.tym.cast.interfaces.Constant;
 import com.androidtecknowlogy.tym.cast.app.AppController;
 import com.androidtecknowlogy.tym.cast.helper.pojo.CastItems;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -68,7 +68,6 @@ public class ItemsModel {
                                 CastItems castItems = dataSnap.getValue(CastItems.class);
                                 Log.e(LOG_TAG, "From fire base " + castItems.getCastName());
                                 AppController.detailsCastItems.add(castItems);
-                                Log.e(LOG_TAG, "ArrayListSize " + AppController.detailsCastItems.size());
                             }
                             //get the admin items
                             else if(obj instanceof String) {
@@ -111,8 +110,8 @@ public class ItemsModel {
         Log.e(LOG_TAG, "Another ArrayListSize " + AppController.detailsCastItems.size());
         itemModelToPresenter.recyclerView(true);
     }
-    public void getPosition(int itemPosition, int position) {
+    public void getPosition(List<CastItems> castItemsList, int itemPosition, int position) {
         itemModelToPresenter.positionDetails(itemPosition,
-                AppController.detailsCastItems.get(position));
+                castItemsList.get(position));
     }
 }

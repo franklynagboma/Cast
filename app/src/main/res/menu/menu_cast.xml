@@ -2,10 +2,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.androidtecknowlogy.tym.cast.cast.activity_view.CastActivity" >
-    <item android:id="@+id/edit_details"
+    <item android:id="@+id/action_edit"
         android:title="@string/action_edit"
+        android:visible="false"
         app:showAsAction="never"/>
-    <item android:id="@+id/sign_out"
-        android:title="@string/action_sign_out"
+    <item android:id="@+id/action_logout"
+        android:title="@string/action_log_out"
         app:showAsAction="never"/>
 </menu>

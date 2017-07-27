@@ -12,13 +12,13 @@ import android.widget.FrameLayout;
  * Created by AGBOMA franklyn on 7/25/17.
  */
 
-public class ScrollBehaviour extends CoordinatorLayout.Behavior<BottomNavigationView> {
+public class CoordinatorScrollBehaviour extends CoordinatorLayout.Behavior<BottomNavigationView> {
 
-    public ScrollBehaviour() {
+    public CoordinatorScrollBehaviour() {
         super();
     }
 
-    public ScrollBehaviour(Context context, AttributeSet attributeSet) {
+    public CoordinatorScrollBehaviour(Context context, AttributeSet attributeSet) {
         super(context,attributeSet);
     }
 
@@ -43,6 +43,7 @@ public class ScrollBehaviour extends CoordinatorLayout.Behavior<BottomNavigation
             showBottomNav(child);
         else
             hindBottomNav(child);
+
     }
 
     private void showBottomNav(BottomNavigationView child) {

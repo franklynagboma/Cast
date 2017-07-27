@@ -8,10 +8,10 @@
         android:title="@string/action_cast"
         app:showAsAction="ifRoom"/>
     <item
-        android:id="@+id/action_event"
+        android:id="@+id/action_profile"
         android:enabled="true"
-        android:icon="@drawable/ic_action_event"
-        android:title="@string/action_events"
+        android:icon="@drawable/ic_details_white_24dp"
+        android:title="@string/action_profile"
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/action_settings"

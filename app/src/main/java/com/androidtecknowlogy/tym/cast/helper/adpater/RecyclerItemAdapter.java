@@ -1,7 +1,6 @@
 package com.androidtecknowlogy.tym.cast.helper.adpater;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
@@ -17,9 +16,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.androidtecknowlogy.tym.cast.R;
-import com.androidtecknowlogy.tym.cast.app.AppController;
 import com.androidtecknowlogy.tym.cast.cast.fragment_view.ItemsFragment;
-import com.androidtecknowlogy.tym.cast.faces.Constant;
+import com.androidtecknowlogy.tym.cast.interfaces.Constant;
 import com.androidtecknowlogy.tym.cast.helper.pojo.CastItems;
 import com.androidtecknowlogy.tym.cast.helper.view.CircularTransform;
 import com.squareup.picasso.Picasso;
@@ -32,15 +30,14 @@ import java.util.Random;
  * Created by AGBOMA franklyn on 6/18/17.
  */
 
-public class RecyclerItemAdapter extends RecyclerView.Adapter<RecyclerItemAdapter.LayoutHolder>{
+public class RecyclerItemAdapter extends RecyclerView.Adapter<RecyclerItemAdapter.LayoutHolder> {
 
     private final String LOG_TAG = RecyclerItemAdapter.class.getSimpleName();
     private Context context;
+    public List<CastItems> castItemsList;
     private boolean isTab;
     private Constant.ItemsSendItemPositionToPresenter itemPositionToPresenter;
     private ItemsFragment.DynamicFragment dynamicFragment;
-    private int countLeft = 1;
-    private int countRight = 2;
     private int lastPosition = -1;
     private List<Integer> circularFrame = new ArrayList<Integer>(){ {
         add(R.drawable.circular_frame_red);
@@ -52,7 +49,7 @@ public class RecyclerItemAdapter extends RecyclerView.Adapter<RecyclerItemAdapte
     private List<Integer> saveCircularFramePosition;
 
 
-    public RecyclerItemAdapter(Context context, boolean isTab,
+    public RecyclerItemAdapter(Context context, List<CastItems> castItemsList, boolean isTab,
                                Constant.ItemsSendItemPositionToPresenter itemPositionToPresenter,
                                ItemsFragment.DynamicFragment dynamicFragment) {
 
@@ -62,6 +59,7 @@ public class RecyclerItemAdapter extends RecyclerView.Adapter<RecyclerItemAdapte
          * a method to perform logic.
          */
         this.context = context;
+        this.castItemsList = castItemsList;
         this.isTab = isTab;
         saveCircularFramePosition = new ArrayList<>();
         this.itemPositionToPresenter = itemPositionToPresenter;
@@ -79,8 +77,7 @@ public class RecyclerItemAdapter extends RecyclerView.Adapter<RecyclerItemAdapte
     @Override
     public void onBindViewHolder(final LayoutHolder holder, final int position) {
 
-        CastItems castItems = AppController.detailsCastItems.get(position);
-        Log.i(LOG_TAG, "castItems " + castItems.toString());
+        final CastItems castItems = castItemsList.get(position);
 
         //Set views display
         /*RelativeLayout.LayoutParams positionView = (RelativeLayout.LayoutParams)
@@ -109,14 +106,15 @@ public class RecyclerItemAdapter extends RecyclerView.Adapter<RecyclerItemAdapte
         holder.castName.setText(castItems.getCastName());
         holder.castGender.setText(castItems.getCastGender());
         holder.castTitle.setText(castItems.getCastTitle());
-        holder.castJoined.setText(castItems.getCastJoined());
+        holder.castDob.setText(castItems.getCastDob());
 
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //arguments = position-> for cast item while true to tell it being clinked
-                Log.i(LOG_TAG, "Res position " + position);
-                itemPositionToPresenter.positionItemFragment(
+                Log.i(LOG_TAG, "Res position " + position
+                        +"name" + castItems.getCastName());
+                itemPositionToPresenter.positionItemFragment(castItemsList,
                         saveCircularFramePosition.get(position), position, true);
                 //show cast details on new Fragment.
                 dynamicFragment.changeToDetailsFragment();
@@ -138,7 +136,16 @@ public class RecyclerItemAdapter extends RecyclerView.Adapter<RecyclerItemAdapte
     @Override
     public int getItemCount() {
         //Return ArrayList size of item.
-        return AppController.detailsCastItems.size();
+        return castItemsList.size();
+    }
+
+    public void setFilter(List<CastItems> castItems) {
+        //use clear intend of re-initializing so as to remove all item on castItemsList
+        Log.i(LOG_TAG, "On filter castItemsList size 1= " + castItems.size());
+        castItemsList = new ArrayList<>();
+        castItemsList.addAll(castItems);
+        Log.i(LOG_TAG, "On filter castItemsList size 2= " + castItemsList.size());
+        notifyDataSetChanged();
     }
 
 
@@ -148,7 +155,7 @@ public class RecyclerItemAdapter extends RecyclerView.Adapter<RecyclerItemAdapte
         private RelativeLayout textHolder;
         private FrameLayout imageHolder;
         private ImageView castImage;
-        private TextView castName, castTitle, castGender, castJoined;
+        private TextView castName, castTitle, castGender, castDob;
 
         public LayoutHolder(View itemView) {
             super(itemView);
@@ -160,7 +167,7 @@ public class RecyclerItemAdapter extends RecyclerView.Adapter<RecyclerItemAdapte
             this.castName = (TextView) itemView.findViewById(R.id.cast_name);
             this.castTitle = (TextView) itemView.findViewById(R.id.cast_title);
             this.castGender = (TextView) itemView.findViewById(R.id.cast_gender);
-            this.castJoined = (TextView) itemView.findViewById(R.id.cast_joined);
+            this.castDob = (TextView) itemView.findViewById(R.id.cast_dob);
         }
     }
 }

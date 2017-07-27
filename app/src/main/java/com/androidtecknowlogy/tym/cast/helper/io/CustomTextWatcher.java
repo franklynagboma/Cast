@@ -1,6 +1,5 @@
 package com.androidtecknowlogy.tym.cast.helper.io;
 
-import android.content.Context;
 import android.support.design.widget.TextInputLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -8,7 +7,7 @@ import android.util.Log;
 import android.widget.EditText;
 
 import com.androidtecknowlogy.tym.cast.cast.fragment_view.EventFragment;
-import com.androidtecknowlogy.tym.cast.complete_signup.activity_view.CompleteSignUpFragment;
+import com.androidtecknowlogy.tym.cast.complete_signup.fragment.CompleteSignUpFragment;
 
 /**
  * Created by AGBOMA franklyn on 6/27/17.
@@ -115,6 +114,23 @@ public class CustomTextWatcher implements TextWatcher {
                 else
                     inputLayout.setError("");
             }
+        }
+
+        if(idType.equals(completeSignUpFragment.DOB_ID)){
+            chars = charSequence.toString();
+            if(null != editText) {
+                if(chars.isEmpty())
+                    editText.setError("Input date of birth");
+                else
+                    editText.setError(null);
+            }
+        }
+
+        if(idType.equals(completeSignUpFragment.SUMMARY_ID)) {
+            chars = charSequence.toString();
+            int charLength = chars.length();
+            if(null != inputLayout)
+                inputLayout.setError(charLength + " of 250");
         }
 
         //Text watcher for EventFragment.

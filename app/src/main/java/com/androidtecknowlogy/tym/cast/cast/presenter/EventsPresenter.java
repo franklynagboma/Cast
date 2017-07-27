@@ -3,7 +3,7 @@ package com.androidtecknowlogy.tym.cast.cast.presenter;
 import android.content.Context;
 
 import com.androidtecknowlogy.tym.cast.cast.model.EventsModel;
-import com.androidtecknowlogy.tym.cast.faces.Constant;
+import com.androidtecknowlogy.tym.cast.interfaces.Constant;
 import com.androidtecknowlogy.tym.cast.helper.io.CustomDataFormat;
 import com.androidtecknowlogy.tym.cast.helper.pojo.Events;
 

@@ -4,7 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.util.Log;
 
-import com.androidtecknowlogy.tym.cast.faces.Constant;
+import com.androidtecknowlogy.tym.cast.interfaces.Constant;
 import com.androidtecknowlogy.tym.cast.app.AppController;
 import com.androidtecknowlogy.tym.cast.helper.pojo.CastItems;
 import com.google.firebase.database.DataSnapshot;
@@ -32,11 +32,12 @@ public class CompleteSignUpModel implements Constant.PresenterSendSignUpToModel 
     @Override
     public void signUpInfo(String uId, String photo, String email, String gender,
                            String month_year, String name, String mobile,
-                           String title, String password, Context context) {
+                           String title, String password,String dob, String summary,
+                           Context context) {
 
         Log.i(LOG_TAG, "\nuId "+uId +"\nphoto "+photo +"\nemail "+email +"\ngender "+gender
                 +"\nmonth_year "+month_year +"\nname "+name +"\nmobile "+mobile +"\ntitle "+title
-                +"\npassword "+password);
+                +"\npassword "+password +"\ndob "+dob +"\nsummary "+summary);
 
         //send to save online
         loading = new ProgressDialog(context);
@@ -47,7 +48,7 @@ public class CompleteSignUpModel implements Constant.PresenterSendSignUpToModel 
 
         AppController.castsData.child(uId)
                 .setValue(new CastItems(photo, name,title,gender,mobile,
-                        email,null,password,month_year));
+                        email,null,password, dob, month_year));
         AppController.castsData.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

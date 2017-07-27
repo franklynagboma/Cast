@@ -85,11 +85,7 @@
                 android:inputType="text"
                 android:layout_marginBottom="5dp"/>-->
             <!--Use customCalendar to allow scrolling effect on calendar-->
-            <com.androidtecknowlogy.tym.cast.helper.io.CustomCalendar
-                android:id="@+id/calender_picker"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp" />
+            <include layout="@layout/calendar_layout"/>
 
             <TextView
                 android:id="@+id/input_time"

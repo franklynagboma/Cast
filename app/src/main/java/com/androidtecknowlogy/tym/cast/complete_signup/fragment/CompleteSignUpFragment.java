@@ -1,4 +1,4 @@
-package com.androidtecknowlogy.tym.cast.complete_signup.activity_view;
+package com.androidtecknowlogy.tym.cast.complete_signup.fragment;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,7 +13,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatRadioButton;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +22,7 @@ import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,7 +30,10 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.androidtecknowlogy.tym.cast.R;
 import com.androidtecknowlogy.tym.cast.cast.activity_view.CastActivity;
-import com.androidtecknowlogy.tym.cast.faces.Constant;
+import com.androidtecknowlogy.tym.cast.complete_signup.activity_view.GoogleSignInActivity;
+import com.androidtecknowlogy.tym.cast.complete_signup.model.CompleteSignUpModel;
+import com.androidtecknowlogy.tym.cast.complete_signup.presenter.CompleteSignUpPresenter;
+import com.androidtecknowlogy.tym.cast.interfaces.Constant;
 import com.androidtecknowlogy.tym.cast.helper.io.CustomCalendar;
 import com.androidtecknowlogy.tym.cast.helper.io.CustomDataFormat;
 import com.androidtecknowlogy.tym.cast.helper.view.CircularTransform;
@@ -72,6 +75,9 @@ public class CompleteSignUpFragment extends Fragment implements GoogleSignInActi
             "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
     //get views
+    @BindView(R.id.complete)
+    RelativeLayout layoutComplete;
+
     @BindView(R.id.cast_image)
     ImageView castImage;
 
@@ -126,15 +132,37 @@ public class CompleteSignUpFragment extends Fragment implements GoogleSignInActi
     AppCompatRadioButton rbMale;
     @BindView(R.id.rb_female)
     AppCompatRadioButton rbFemale;
+
     @BindView(R.id.send_complete_sign_up)
     Button sendButton;
 
+    @BindView(R.id.view_edit)
+    View viewEdit;
+
 
     private Constant.CompleteSignUpToPresenter completeSignUpToPresenter;
+    public KnowActivity knowActivity;
 
     public void setCompleteSignUpToPresenter(Constant.CompleteSignUpToPresenter
                                                      completeSignUpToPresenter) {
         this.completeSignUpToPresenter = completeSignUpToPresenter;
+    }
+
+    public interface KnowActivity {
+        void activity();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(getActivity().getClass().getSimpleName().equals("CastActivity")) {
+            try {
+                knowActivity = (KnowActivity) context;
+            }
+            catch (ClassCastException w) {
+                throw new ClassCastException(context.toString());
+            }
+        }
     }
 
     @Override
@@ -211,6 +239,14 @@ public class CompleteSignUpFragment extends Fragment implements GoogleSignInActi
     }
 
     private void init() {
+
+        CompleteSignUpPresenter completeSignUpPresenter = new CompleteSignUpPresenter();
+        setCompleteSignUpToPresenter(completeSignUpPresenter);
+        //set up interface call for PresenterSendSignUpToModel
+        //set up interface call for presenterSendSignUPToCompleteSignUpFragment
+        CompleteSignUpModel model = new CompleteSignUpModel();
+        completeSignUpPresenter.setPresenterSendSignUpToModel(model, model,this);
+
         completeText.setPaintFlags(completeText.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 
         rg = (RadioGroup) view.findViewById(R.id.rg);
@@ -236,6 +272,15 @@ public class CompleteSignUpFragment extends Fragment implements GoogleSignInActi
                 (inputConfirm, CONFIRM_ID));
         userDob.addTextChangedListener(new CustomTextWatcher(userDob,DOB_ID));
         userSummary.addTextChangedListener(new CustomTextWatcher(inputSummary, SUMMARY_ID));
+
+        //get Arguments
+        Bundle arg = getArguments();
+        if(null != arg) {
+            layoutComplete.setVisibility(View.GONE);//hind image view line.
+            viewEdit.setVisibility(View.VISIBLE);//show space view.
+            getSignInCredn(arg.getString("password"), arg.getString("uid"),
+                    arg.getString("image"), arg.getString("name"), arg.getString("email"));
+        }
 
     }
 
@@ -316,12 +361,50 @@ public class CompleteSignUpFragment extends Fragment implements GoogleSignInActi
             gender = "Male";
         //set field to presenter
         completeSignUpToPresenter.userSignUp(uId, photo, email, gender,
-                userMobile,userSunName, userOtherNames,
-                userTitle, userEventPassword, userEventPasswordConfirm, userDob, userSummary, context);
+                userMobile,userSunName, userOtherNames, userTitle,
+                userEventPassword, userEventPasswordConfirm, userDob, userSummary, context);
     }
 
+    /**
+     * This method overloads getSignInCredn from GoogleSignInActivity interface
+     * to view arg from CastActivity which was got from preference storage
+     * @param password
+     * @param uId
+     * @param photo
+     * @param name
+     * @param email
+     */
+    private void getSignInCredn(String password, String uId,
+                                String photo, String name, String email) {
+        //set and hind password text field
+        //so users cannot edit it on this page.
+        userEventPassword.setText(password);
+        userEventPasswordConfirm.setText(password);
+        inputPassword.setVisibility(View.GONE);
+        inputConfirm.setVisibility(View.GONE);
+
+        performViewPresentation(uId, photo, name, email);
+    }
+
+    /**
+     * This method override GoogleSignInActivity interface getSignInCredn
+     * @param uId
+     * @param photo
+     * @param name
+     * @param email
+     */
     @Override
     public void getSignInCredn(String uId, String photo, String name, String email) {
+        //set and show password text field if not showing.
+        userEventPassword.setText("");
+        userEventPasswordConfirm.setText("");
+        inputPassword.setVisibility(View.VISIBLE);
+        inputConfirm.setVisibility(View.VISIBLE);
+        performViewPresentation(uId, photo, name, email);
+    }
+
+    private void performViewPresentation(String uId, String photo, String name, String email) {
+
         //get credentials from GoogleSignInActivity
         this.uId = uId;
         this.photo = photo;
@@ -347,9 +430,7 @@ public class CompleteSignUpFragment extends Fragment implements GoogleSignInActi
         }
         //set emails
         userEmail.setText(email);
-
     }
-
     @Override
     public void startActivity(String message) {
         String[] getMessage = message.split("/");
@@ -369,13 +450,26 @@ public class CompleteSignUpFragment extends Fragment implements GoogleSignInActi
                 //save preference.
                 prefEdit = pref.edit();
                 prefEdit.putBoolean(Intent.EXTRA_TEXT, true);
-                prefEdit.putString("name", getMessage[0]);
+                prefEdit.putString("uid", uId);
                 prefEdit.putString("image", photo);
+                prefEdit.putString("email", email);
+                prefEdit.putString("name", getMessage[0]);
                 prefEdit.putString("password", getMessage[1]);
+                prefEdit.putString("gender", getMessage[2]);
+                prefEdit.putString("dob", getMessage[3]);
+                prefEdit.putString("mobile", getMessage[4]);
+                prefEdit.putString("title", getMessage[5]);
+                prefEdit.putString("summary", getMessage[6]);
                 prefEdit.apply();
-                getActivity().finish();
-                //start next Activity
-                startActivity(new Intent(getActivity(), CastActivity.class));
+                /*if(getActivity().getClass().getSimpleName().equals("CastActivity"))
+                    knowActivity.activity();*/
+                if(null != getArguments())
+                    knowActivity.activity();
+                else {
+                    getActivity().finish();
+                    //start next Activity
+                    startActivity(new Intent(getActivity(), CastActivity.class));
+                }
             }
         }
 

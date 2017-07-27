@@ -1,13 +1,13 @@
-package com.androidtecknowlogy.tym.cast.faces;
+package com.androidtecknowlogy.tym.cast.interfaces;
 
 import android.content.Context;
-import android.content.res.Resources;
-import android.support.v7.widget.AppCompatRadioButton;
+import android.view.View;
 import android.widget.EditText;
-import android.widget.RadioGroup;
 
 import com.androidtecknowlogy.tym.cast.helper.pojo.CastItems;
 import com.androidtecknowlogy.tym.cast.helper.pojo.Events;
+
+import java.util.List;
 
 /**
  * Created by AGBOMA franklyn on 6/25/17.
@@ -15,12 +15,17 @@ import com.androidtecknowlogy.tym.cast.helper.pojo.Events;
 
 public interface Constant {
 
+    interface OnCastItemClicked {
+        void onCastClicked(View view, int position);
+    }
+
     /**
      * CastItemFragment-Presenter-CastDetailsFragment
      */
     //get item position from recycler-ItemsFragment-Presenter
     interface ItemsSendItemPositionToPresenter {
-        void positionItemFragment(int itemPosition, int position, boolean value);
+        void positionItemFragment(List<CastItems> castItemsList,
+                                  int itemPosition, int position, boolean value);
     }
     //call ItemFragment recycler view.
     interface PresenterCallsItemRecyclerView {

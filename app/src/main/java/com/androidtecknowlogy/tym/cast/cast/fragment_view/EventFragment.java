@@ -1,7 +1,6 @@
 package com.androidtecknowlogy.tym.cast.cast.fragment_view;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,25 +9,16 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.ShareActionProvider;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -36,8 +26,7 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.androidtecknowlogy.tym.cast.R;
-import com.androidtecknowlogy.tym.cast.app.AppController;
-import com.androidtecknowlogy.tym.cast.faces.Constant;
+import com.androidtecknowlogy.tym.cast.interfaces.Constant;
 import com.androidtecknowlogy.tym.cast.helper.adpater.EventListAdapter;
 import com.androidtecknowlogy.tym.cast.helper.io.CustomCalendar;
 import com.androidtecknowlogy.tym.cast.helper.io.CustomDataFormat;
@@ -47,13 +36,11 @@ import com.androidtecknowlogy.tym.cast.helper.view.CircularTransform;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnItemLongClick;
 
 /**
  * Created by AGBOMA franklyn on 6/18/17.
@@ -95,8 +82,6 @@ public class EventFragment extends Fragment implements Constant.PresenterEventsL
 
 
     public EventFragment(){
-        //set options menu to inflate share menu
-        //setHasOptionsMenu(true);
     }
     @Nullable
     @Override
@@ -289,6 +274,8 @@ public class EventFragment extends Fragment implements Constant.PresenterEventsL
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        //set options menu to inflate share menu
+        //setHasOptionsMenu(true);
         if(getPrefName.equals(""))
             getPrefName = "AN0NYMOUS";
         Log.i(LOG_TAG, "Name: " + getPrefName);

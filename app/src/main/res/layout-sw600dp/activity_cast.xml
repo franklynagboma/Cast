@@ -30,8 +30,7 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
         android:background="@android:color/transparent"
-        android:orientation="horizontal"
-        android:weightSum="3">
+        android:orientation="horizontal">
         <android.support.v7.widget.CardView
             xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -50,7 +49,7 @@
             android:id="@+id/cast_details_fragment"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1.4"/>
+            android:layout_weight="1.4" />
     </LinearLayout>
 
     <!--Fragment navigation view-->
@@ -87,22 +86,22 @@
             app:fab_colorPressed="@color/white_tin" />
 
         <com.getbase.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_events"
+            android:id="@+id/fab_profile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:fab_icon="@drawable/ic_action_event_black"
+            app:fab_icon="@drawable/ic_details_white_24dp"
             app:fab_colorNormal="@android:color/white"
-            app:fab_title="Events"
+            app:fab_title="Profile"
             app:fab_colorPressed="@color/white_tin"/>
 
-        <!--<com.getbase.floatingactionbutton.FloatingActionButton
+        <com.getbase.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_cast"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:fab_icon="@drawable/ic_action_cast_black"
             app:fab_colorNormal="@android:color/white"
             app:fab_title="Cast"
-            app:fab_colorPressed="@color/white_tin"/>-->
+            app:fab_colorPressed="@color/white_tin"/>
 
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
 

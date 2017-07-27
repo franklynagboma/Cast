@@ -96,10 +96,15 @@
     <string name="mobile">Mobile details</string>
     <string name="email">Email</string>
     <string name="summary">Summary</string>
-    <string name="join">Joined <xliff:g id="value">%1$s</xliff:g></string>
+    <string name="dob">Date of Birth: <xliff:g id="value">%1$s</xliff:g></string>
     <string name="action_edit">Edit</string>
+    <string name="action_profile">Profile</string>
     <string name="action_sign_out">Sign Out</string>
+    <string name="action_log_out">Logout</string>
+    <string name="action_log_in">Login</string>
     <string name="action_share">Share</string>
+    <string name="action_search">Search</string>
     <string name="action_new_event">Add event</string>
+    <string name="not_sign_up">Not registered? Sign Up</string>
 
 </resources>

@@ -1,6 +1,5 @@
-package com.androidtecknowlogy.tym.cast.app;
+package com.androidtecknowlogy.tym.cast.login;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -14,11 +13,11 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.androidtecknowlogy.tym.cast.R;
+import com.androidtecknowlogy.tym.cast.app.AppController;
 import com.androidtecknowlogy.tym.cast.cast.activity_view.CastActivity;
-import com.androidtecknowlogy.tym.cast.complete_signup.fragment.LoginFragment;
+import com.androidtecknowlogy.tym.cast.complete_signup.activity_view.GoogleSignInActivity;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiActivity;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
@@ -34,7 +33,7 @@ import butterknife.OnClick;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private final String LOG_TAG = LoginFragment.class.getSimpleName();
+    private final String LOG_TAG = LoginActivity.class.getSimpleName();
 
     private GoogleApiClient googleApiClient;
     private SharedPreferences pref;
@@ -93,7 +92,7 @@ public class LoginActivity extends AppCompatActivity {
         else {
             //save user login
             prefEdit = pref.edit();
-            prefEdit.putBoolean("logout", true);
+            prefEdit.putBoolean("login", true);
             prefEdit.apply();
             startActivity("castActivity");
         }
@@ -112,11 +111,20 @@ public class LoginActivity extends AppCompatActivity {
                 .setResultCallback(new ResultCallback<Status>() {
                     @Override
                     public void onResult(@NonNull Status status) {
+                        //set preference saved to empty.
                         prefEdit = pref.edit();
                         prefEdit.putBoolean(Intent.EXTRA_TEXT, false);
-                        prefEdit.putString("name", "");
+                        prefEdit.putBoolean("login", false);
+                        prefEdit.putString("uid", "");
                         prefEdit.putString("image", "");
+                        prefEdit.putString("email", "");
+                        prefEdit.putString("name", "");
                         prefEdit.putString("password", "");
+                        prefEdit.putString("gender", "");
+                        prefEdit.putString("dob", "");
+                        prefEdit.putString("mobile", "");
+                        prefEdit.putString("title", "");
+                        prefEdit.putString("summary", "");
                         prefEdit.apply();
                         startActivity("googleActivity");
                     }
@@ -126,6 +134,6 @@ public class LoginActivity extends AppCompatActivity {
     private void startActivity(String activity) {
         this.finish();
         startActivity(new Intent(LoginActivity.this, activity.equals("castActivity")
-                ?CastActivity.class :GoogleApiActivity.class));
+                ?CastActivity.class :GoogleSignInActivity.class));
     }
 }

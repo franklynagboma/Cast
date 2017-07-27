@@ -1,12 +1,13 @@
 package com.androidtecknowlogy.tym.cast.cast.presenter;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.util.Log;
 
-import com.androidtecknowlogy.tym.cast.faces.Constant;
+import com.androidtecknowlogy.tym.cast.interfaces.Constant;
 import com.androidtecknowlogy.tym.cast.cast.model.ItemsModel;
 import com.androidtecknowlogy.tym.cast.helper.pojo.CastItems;
+
+import java.util.List;
 
 /**
  * Created by AGBOMA franklyn on 6/25/17.
@@ -44,7 +45,8 @@ public class ItemsPresenter implements Constant.ItemsSendItemPositionToPresenter
      * @param position
      */
     @Override
-    public void positionItemFragment(int itemPosition, int position, boolean value) {
+    public void positionItemFragment(List<CastItems> castItemsList,
+                                     int itemPosition, int position, boolean value) {
         if(!value) {
             //call attach and detach data listener.
             if(position == 1)
@@ -55,7 +57,7 @@ public class ItemsPresenter implements Constant.ItemsSendItemPositionToPresenter
         }
         //get position clicked.
         else
-            model.getPosition(itemPosition, position);
+            model.getPosition(castItemsList,itemPosition, position);
 
     }
 
@@ -64,7 +66,8 @@ public class ItemsPresenter implements Constant.ItemsSendItemPositionToPresenter
         Log.e(LOG_TAG, "call details fragment with castItems");
         presenterToDetailsFragment.details(itemPosition, items.getCastImage(),
                 items.getCastEmail(), items.getCastGender(), items.getCastJoined(),
-                items.getCastName(), items.getCastMobile(), items.getCastTitle());
+                items.getCastName(), items.getCastMobile(), items.getCastTitle(),
+                items.getCastDob(), items.getCastSummary());
     }
 
     @Override

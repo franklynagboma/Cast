@@ -57,7 +57,7 @@
                     android:textStyle="bold"
                     android:alpha="0.6"/>
                 <TextView
-                    android:id="@+id/cast_joined"
+                    android:id="@+id/cast_dob"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/cast_gender"
@@ -256,8 +256,7 @@
                     android:id="@+id/cast_summary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    android:text="@string/large_text"/>
+                    android:padding="5dp" />
             </ScrollView>
         </RelativeLayout>
     </LinearLayout>

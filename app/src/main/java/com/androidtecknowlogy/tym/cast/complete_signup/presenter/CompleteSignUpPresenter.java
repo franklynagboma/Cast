@@ -5,7 +5,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.EditText;
 
-import com.androidtecknowlogy.tym.cast.faces.Constant;
+import com.androidtecknowlogy.tym.cast.interfaces.Constant;
 import com.androidtecknowlogy.tym.cast.complete_signup.model.CompleteSignUpModel;
 import com.androidtecknowlogy.tym.cast.helper.io.CustomDataFormat;
 
@@ -19,7 +19,7 @@ public class CompleteSignUpPresenter implements Constant.CompleteSignUpToPresent
         Constant.ModelSendToPresentSignUpSaved{
 
     private final String LOG_TAG = CompleteSignUpPresenter.class.getSimpleName();
-    private String saveLastName = "";
+    private String saveDetails = "";
 
     private Constant.PresenterSendSignUpToModel presenterSendSignUpToModel;
     private Constant.PresenterSendsSignUpCompletedToCompleteSignUpFragment
@@ -53,7 +53,8 @@ public class CompleteSignUpPresenter implements Constant.CompleteSignUpToPresent
     @Override
     public void userSignUp(String uId, String photo, String email, String gender, EditText mobile,
                            EditText sunName, EditText otherNames, EditText title, EditText password,
-                           EditText confirmPassword, Context context) {
+                           EditText confirmPassword, EditText dob, EditText summary,
+                           Context context) {
 
         //get EditText strings
         String sName = sunName.getText().toString().trim();
@@ -62,18 +63,27 @@ public class CompleteSignUpPresenter implements Constant.CompleteSignUpToPresent
         String tTitle = title.getText().toString().trim();
         String pPassword = password.getText().toString().trim();
         String cPassword = confirmPassword.getText().toString().trim();
+        String uDob = dob.getText().toString().trim();
+        String uSummary = summary.getText().toString().trim();
 
         //check and preform logic operations
         if(TextUtils.isEmpty(sName) || TextUtils.isEmpty(oNames)
                 || TextUtils.isEmpty(mMobile) || TextUtils.isEmpty(tTitle)
-                || TextUtils.isEmpty(pPassword) || TextUtils.isEmpty(cPassword)) {
+                || TextUtils.isEmpty(pPassword) || TextUtils.isEmpty(cPassword)
+                || TextUtils.isEmpty(uSummary)) {
             presenterSendsSignUpCompletedToCompleteSignUpFragment
                     .startActivity("empty/Please fill all");
         }
+        else if(TextUtils.isEmpty(uDob))
+            presenterSendsSignUpCompletedToCompleteSignUpFragment
+                    .startActivity("empty/No DOB, click icon");
         else {
             Log.i(LOG_TAG, "presenter get detail");
             //use / to send error
-            if(!pPassword.equals(cPassword)) {
+            if(uSummary.length() > 250)
+                presenterSendsSignUpCompletedToCompleteSignUpFragment
+                        .startActivity("words/Above 250 words");
+            else if(!pPassword.equals(cPassword)) {
                 Log.i(LOG_TAG, "password not equal " +pPassword +" " +cPassword);
                 presenterSendsSignUpCompletedToCompleteSignUpFragment
                         .startActivity("password/Passwords not equal");
@@ -93,11 +103,12 @@ public class CompleteSignUpPresenter implements Constant.CompleteSignUpToPresent
                 }
                 // trim the space at the ending and send al to model
                 getName = getName.trim();
-                Log.i(LOG_TAG, "Names " + getName);
-                saveLastName = getName;
+                //save name and password for user login when logout
+                saveDetails = getName+"?"+ pPassword+"?"+gender+"?"+uDob
+                        +"?"+mobile+"?"+tTitle+"?"+uSummary;
                 presenterSendSignUpToModel.signUpInfo(uId, photo, email, gender,
                         new CustomDataFormat().getDateFormat(new Date(),"m/y"),
-                        getName,mMobile, tTitle, pPassword,context);
+                        getName,mMobile, tTitle, pPassword, uDob, uSummary, context);
             }
         }
 
@@ -107,7 +118,8 @@ public class CompleteSignUpPresenter implements Constant.CompleteSignUpToPresent
     @Override
     public void saving(boolean value) {
         if(value)
-            presenterSendsSignUpCompletedToCompleteSignUpFragment.startActivity(saveLastName);
+            presenterSendsSignUpCompletedToCompleteSignUpFragment
+                    .startActivity(saveDetails);
         else
             presenterSendsSignUpCompletedToCompleteSignUpFragment
                     .startActivity("error");

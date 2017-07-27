@@ -1,7 +1,6 @@
 package com.androidtecknowlogy.tym.cast.cast.fragment_view;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -15,8 +14,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.androidtecknowlogy.tym.cast.R;
-import com.androidtecknowlogy.tym.cast.cast.presenter.ItemsPresenter;
-import com.androidtecknowlogy.tym.cast.faces.Constant;
+import com.androidtecknowlogy.tym.cast.cast.activity_view.CastActivity;
+import com.androidtecknowlogy.tym.cast.interfaces.Constant;
 import com.androidtecknowlogy.tym.cast.helper.view.CircularTransform;
 import com.squareup.picasso.Picasso;
 
@@ -28,7 +27,8 @@ import butterknife.OnClick;
  * Created by AGBOMA franklyn on 6/26/17.
  */
 
-public class DetailsFragment extends Fragment implements Constant.PresenterSendToCastDetailsFragment{
+public class DetailsFragment extends Fragment implements Constant.PresenterSendToCastDetailsFragment,
+        CastActivity.CastUserToDetailFragment{
 
     private final String LOG_TAG = DetailsFragment.class.getSimpleName();
 
@@ -46,8 +46,8 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
     TextView castTitle;
     @BindView(R.id.cast_gender)
     TextView castGender;
-    @BindView(R.id.cast_joined)
-    TextView castJoined;
+    @BindView(R.id.cast_dob)
+    TextView castDob;
 
     @BindView(R.id.mobile_details)
     TextView mobileText;
@@ -113,12 +113,22 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
     }
 
     @Override
+    public void CastSendUsersToDetailFragment(String image, String name, String title, String dob,
+                                              String gender, String mobile,
+                                              String email, String summary) {
+
+        showDetails(0, image, email, gender, "", name, mobile, title, dob, summary);
+    }
+
+    @Override
     public void details(final int itemPosition, final String photo, final String email,
                         final String gender, String month_year, final String name,
-                        final String mobile, final String title) {
+                        final String mobile, final String title, final String dob,
+                        final String summary) {
 
         Log.i(LOG_TAG, "Details \n" + photo +"\n"+ email +"\n"+ gender
                 +"\n"+ month_year +"\n"+ name +"\n"+ mobile +"\n"+ title);
+        showDetails(itemPosition, photo,email,gender,month_year,name,mobile,title,dob,summary);
 
         //Important notice, at the point of overriding an abstract interface method,
         //the view has not be created yet reasons for sending the details to onViewCreated.
@@ -129,6 +139,12 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
         getName = name;
         getMobile = mobile;
         getTitle = title;*/
+    }
+
+    private void showDetails(final int itemPosition, final String photo, final String email,
+                             final String gender, String month_year, final String name,
+                             final String mobile, final String title, final String dob,
+                             final String summary) {
 
         //delay to show details
         new Handler().postDelayed(new Runnable() {
@@ -138,7 +154,8 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
                 if(!photo.isEmpty()) {
                     //for Tab to not through null because this Fragment starts as the Activity does
                     //base on MVC pathern.
-                    imageHolder.setBackgroundResource(itemPosition);
+                    imageHolder.setBackgroundResource(itemPosition != 0
+                            ? itemPosition : R.drawable.circular_frame_yellow);
                     Picasso.with(context).load(photo)
                             .transform(new CircularTransform())
                             .placeholder(R.mipmap.ic_cast_person)
@@ -147,10 +164,10 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
                     castName.setText(name);
                     castTitle.setText(title);
                     castGender.setText(gender);
-                    castJoined.setText(getResources().getString(R.string.join,getMonth_year));
+                    castDob.setText(getResources().getString(R.string.dob,dob));
                     castMobile.setText(mobile);
                     castEmail.setText(email);
-                    //castSummary.setText(summary);
+                    castSummary.setText(summary);
                 }
             }
         },1500);

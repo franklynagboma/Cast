@@ -11,20 +11,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.androidtecknowlogy.tym.cast.R;
+import com.androidtecknowlogy.tym.cast.app.AppController;
+import com.androidtecknowlogy.tym.cast.login.LoginActivity;
+import com.androidtecknowlogy.tym.cast.complete_signup.fragment.CompleteSignUpFragment;
 import com.androidtecknowlogy.tym.cast.complete_signup.model.CompleteSignUpModel;
 import com.androidtecknowlogy.tym.cast.complete_signup.presenter.CompleteSignUpPresenter;
 import com.androidtecknowlogy.tym.cast.cast.activity_view.CastActivity;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -41,11 +42,10 @@ import butterknife.OnClick;
  * Created by AGBOMA franklyn on 6/17/17.
  */
 
-public class GoogleSignInActivity extends AppCompatActivity {
+public class GoogleSignInActivity extends AppCompatActivity{
 
     private final String LOG_TAG = GoogleSignInActivity.class.getSimpleName();
 
-    private GoogleSignInOptions gso;
     private GoogleApiClient googleApiClient;
     private FirebaseAuth authFirebase;
     private FirebaseAuth.AuthStateListener authStateListener;
@@ -58,7 +58,9 @@ public class GoogleSignInActivity extends AppCompatActivity {
 
     public Google googleDetails;
     private SharedPreferences pref;
-    private boolean getPrefBoolean;
+    private SharedPreferences.Editor prefEdit;
+    private boolean getPrefBooleanSignUp;
+    private boolean getPrefBooleanLogin;
     private int orientation;
     private  boolean isTab;
 
@@ -77,53 +79,43 @@ public class GoogleSignInActivity extends AppCompatActivity {
         orientation = getResources().getConfiguration().screenWidthDp;
         Log.i(LOG_TAG, "onCreate " + orientation);
 
-        /*if(getResources().getConfiguration().screenWidthDp < 600)
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        else
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);*/
-        /*isTab = getResources().getBoolean(R.bool.isTab);
-        if(!isTab)
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);*/
-
         //get default preference
         pref =  PreferenceManager.getDefaultSharedPreferences(this);
-        getPrefBoolean = pref.getBoolean(Intent.EXTRA_TEXT, false);
-        Log.i(LOG_TAG, "getBoolean " +getPrefBoolean);
+        getPrefBooleanSignUp = pref.getBoolean(Intent.EXTRA_TEXT, false);
+        getPrefBooleanLogin = pref.getBoolean("login", false);
+        Log.i(LOG_TAG, "getBooleanSignUp " + getPrefBooleanSignUp
+                + " getBooleanLogin " + getPrefBooleanLogin);
+
         /**
-         * getPrefBoolean = true --> start CastActivity
-         * because user has signIn before
+         * if getPrefBooleanSignUp = true and getPrefBooleanLogin = true --> start CastActivity
+         * because user has signIn and login before.
          */
-        if(getPrefBoolean) {
-            startNextActivity();
-        }
+        if(getPrefBooleanSignUp && getPrefBooleanLogin)
+            startNextActivity("castActivity");
+        /**
+         * if getPrefBooleanSignUp = true but getPrefBooleanLogin = false --> start loginActivity
+         * user only signIn but not login.
+         */
+        if(getPrefBooleanSignUp && !getPrefBooleanLogin)
+            startNextActivity("loginActivity");
+
+
 
         setContentView(R.layout.activity_signin);
         ButterKnife.bind(this);
 
-
-        //set up Fragment and interfaces
-        init();
-
-
-        /**
-         * creating sign in option --> user not recognize.
-         */
-        gso = new GoogleSignInOptions
-                .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
 
         //client to access the google sign in api
         googleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
                     @Override
                     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                        //
                         Log.e(LOG_TAG, " onConnnectionFailed");
+                        Toast.makeText(getApplicationContext(), "Fails, Check internet connection.",
+                                Toast.LENGTH_SHORT).show();
                     }
                 })
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, AppController.getInstance().googleSignInOptions())
                 .build();
 
         //initializing setting authentication listener for fire base.
@@ -156,6 +148,7 @@ public class GoogleSignInActivity extends AppCompatActivity {
                                         email,null,null,null));*/
                     }
                     else {
+                        stopLoading();
                         signUpLayout.setVisibility(View.GONE);
                         signInLayout.setVisibility(View.VISIBLE);
                     }
@@ -174,6 +167,8 @@ public class GoogleSignInActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        //set up Fragment and interfaces
+        init();
     }
 
     public void startLoading(String title, String message){
@@ -186,13 +181,14 @@ public class GoogleSignInActivity extends AppCompatActivity {
         loading.show();
     }
     public void stopLoading(){
-        if(loading.isShowing())
+        if(null != loading && loading.isShowing())
             loading.dismiss();
     }
 
-    private void startNextActivity() {
+    private void startNextActivity(String activity) {
         this.finish();
-        startActivity(new Intent(GoogleSignInActivity.this, CastActivity.class));
+        startActivity(new Intent(GoogleSignInActivity.this, activity.equals("castActivity")
+                ?CastActivity.class : LoginActivity.class));
     }
     @OnClick(R.id.sign_in)
     public void onSignInClicked() {
@@ -200,10 +196,10 @@ public class GoogleSignInActivity extends AppCompatActivity {
         signIn();
     }
 
-    @OnClick(R.id.sign_out)
+    /*@OnClick(R.id.sign_out)
     public void onSignOutClicked() {
         signOut();
-    }
+    }*/
 
     private void init() {
         loading = new ProgressDialog(this);
@@ -214,12 +210,12 @@ public class GoogleSignInActivity extends AppCompatActivity {
         //set up interface call for GoogleSignInActivity.
         setGoogleDetails(completeSignUpFragment);
         //set up interface call for CompleteSignUpPresenter
-        CompleteSignUpPresenter completeSignUpPresenter = new CompleteSignUpPresenter();
-        completeSignUpFragment.setCompleteSignUpToPresenter(completeSignUpPresenter);
+        //CompleteSignUpPresenter completeSignUpPresenter = new CompleteSignUpPresenter();
+        //completeSignUpFragment.setCompleteSignUpToPresenter(completeSignUpPresenter);
         //set up interface call for PresenterSendSignUpToModel
         //set up interface call for presenterSendSignUPToCompleteSignUpFragment
-        CompleteSignUpModel model = new CompleteSignUpModel();
-        completeSignUpPresenter.setPresenterSendSignUpToModel(model, model,completeSignUpFragment);
+        //CompleteSignUpModel model = new CompleteSignUpModel();
+        //completeSignUpPresenter.setPresenterSendSignUpToModel(model, model,completeSignUpFragment);
         //set up interface call for presenterSendSignUPToCompleteSignUpFragment
         /*completeSignUpPresenter.setPresenterSendsSignUpCompletedToCompleteSignUpFragment
                 (completeSignUpFragment);*/
@@ -229,18 +225,6 @@ public class GoogleSignInActivity extends AppCompatActivity {
     private void signIn() {
         Intent intent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
         startActivityForResult(intent, RC_SIGN_IN);
-    }
-    private void signOut() {
-        //call fire base authentication sign out
-        authFirebase.signOut();
-        //if the above does not work properly use = FirebaseAuth.getInstance().signOut();
-        Auth.GoogleSignInApi.signOut(googleApiClient).setResultCallback(new ResultCallback<Status>() {
-            @Override
-            public void onResult(@NonNull Status status) {
-                Log.e(LOG_TAG, "user signOut");
-            }
-        });
-
     }
 
     @Override
@@ -257,7 +241,7 @@ public class GoogleSignInActivity extends AppCompatActivity {
 
     private void fireBaseAuthWithGoogle(GoogleSignInAccount account) {
         Log.e(LOG_TAG, "Account id: " + account.getId());
-        startLoading("TymFrontiers signIn", "loading Gmail data...");
+        //startLoading("Cousant signIn", "loading Gmail data...");
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
         authFirebase.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -268,6 +252,8 @@ public class GoogleSignInActivity extends AppCompatActivity {
                         if(!task.isSuccessful()) {
                             Log.e(LOG_TAG, task.getException().toString());
                             Log.e(LOG_TAG, "Authentication fails");
+                            Toast.makeText(getApplicationContext(), "Authentication fails",
+                                    Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -294,10 +280,18 @@ public class GoogleSignInActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        this.finish();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         Log.i(LOG_TAG, "onDestroy");
         stopLoading();
+
+        googleApiClient.stopAutoManage(this);
+        googleApiClient.disconnect();
 
     }
 }

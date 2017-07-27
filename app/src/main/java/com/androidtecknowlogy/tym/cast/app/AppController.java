@@ -2,12 +2,14 @@ package com.androidtecknowlogy.tym.cast.app;
 
 import android.app.Application;
 
+import com.androidtecknowlogy.tym.cast.R;
 import com.androidtecknowlogy.tym.cast.helper.pojo.CastItems;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -15,6 +17,8 @@ import java.util.List;
  */
 
 public class AppController extends Application {
+
+    private final String LOG_TAG = AppController.class.getSimpleName();
 
     private static AppController instance;
     public static FirebaseDatabase firebaseDatabase;
@@ -52,5 +56,18 @@ public class AppController extends Application {
     public static synchronized AppController getInstance(){
         return instance;
     }
+
+    public GoogleSignInOptions googleSignInOptions() {
+        /**
+         * creating sign in option --> user not recognize.
+         */
+        GoogleSignInOptions gso = new GoogleSignInOptions
+                .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        return gso;
+    }
+
 
 }

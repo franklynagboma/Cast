@@ -58,7 +58,7 @@
                 android:textStyle="bold"
                 android:alpha="0.6"/>
             <TextView
-                android:id="@+id/cast_joined"
+                android:id="@+id/cast_dob"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
                 android:layout_width="wrap_content"
