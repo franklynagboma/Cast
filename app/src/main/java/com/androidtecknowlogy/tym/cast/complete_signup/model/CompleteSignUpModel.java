@@ -48,7 +48,7 @@ public class CompleteSignUpModel implements Constant.PresenterSendSignUpToModel 
 
         AppController.castsData.child(uId)
                 .setValue(new CastItems(photo, name,title,gender,mobile,
-                        email,null,password, dob, month_year));
+                        email,summary,password, dob, month_year));
         AppController.castsData.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

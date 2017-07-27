@@ -204,6 +204,8 @@ public class CompleteSignUpFragment extends Fragment implements GoogleSignInActi
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
         if(savedInstanceState != null) {
+            userSunName.setText(savedInstanceState.getString(SUN_NAME_ID));
+            userOtherNames.setText(savedInstanceState.getString(OTHER_NAME_ID));
             userMobile.setText(savedInstanceState.getString(MOBILE_ID));
             userTitle.setText(savedInstanceState.getString(TITLE_ID));
             userEventPassword.setText(savedInstanceState.getString(PASSWORD_ID));
@@ -223,6 +225,8 @@ public class CompleteSignUpFragment extends Fragment implements GoogleSignInActi
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.putString(SUN_NAME_ID, userSunName.getText().toString());
+        outState.putString(OTHER_NAME_ID, userOtherNames.getText().toString());
         outState.putString(MOBILE_ID, userMobile.getText().toString());
         outState.putString(TITLE_ID, userTitle.getText().toString());
         outState.putString(PASSWORD_ID, userEventPassword.getText().toString());

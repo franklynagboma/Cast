@@ -1,7 +1,9 @@
 package com.androidtecknowlogy.tym.cast.cast.fragment_view;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
@@ -41,6 +43,7 @@ public class ItemsFragment extends Fragment implements Constant.PresenterCallsIt
 
     private final String LOG_TAG = ItemsFragment.class.getSimpleName();
     private Constant.ItemsSendItemPositionToPresenter itemPositionToPresenter;
+    private SharedPreferences pref;
 
     @BindView(R.id.item_recycler)
     RecyclerView recyclerView;
@@ -91,11 +94,12 @@ public class ItemsFragment extends Fragment implements Constant.PresenterCallsIt
         View view = inflater.inflate(R.layout.fragment_item_recycler, container, false);
         ButterKnife.bind(this,view);
         context = getActivity();
+        pref = PreferenceManager.getDefaultSharedPreferences(context);
         isTab = context.getResources().getBoolean(R.bool.isTab);
         orientation = getResources().getConfiguration().smallestScreenWidthDp;
 
-        itemAdapter = new RecyclerItemAdapter(context, AppController.detailsCastItems,
-                isTab, itemPositionToPresenter, detailsFragmentScreen);
+        itemAdapter = new RecyclerItemAdapter(context, AppController.detailsCastItems, isTab,
+                itemPositionToPresenter, detailsFragmentScreen);
         return view;
     }
 
@@ -114,6 +118,7 @@ public class ItemsFragment extends Fragment implements Constant.PresenterCallsIt
         searchView.setQueryHint("By name...");
         searchView.setOnQueryTextListener(this);
     }
+
 
     @Override
     public boolean onQueryTextSubmit(String query) {
@@ -162,7 +167,7 @@ public class ItemsFragment extends Fragment implements Constant.PresenterCallsIt
     public void onPause() {
         super.onPause();
         //arguments = 0-> for null int and false -> not to allow click
-        itemPositionToPresenter.positionItemFragment(null,0,0, false);
+        itemPositionToPresenter.positionItemFragment(null, "", 0,0, false);
         Log.i(LOG_TAG, "onPause detached listener");
     }
 
@@ -171,7 +176,7 @@ public class ItemsFragment extends Fragment implements Constant.PresenterCallsIt
         Log.e(LOG_TAG, "set view");
         setProgressBar(true);
         //set model data listener
-        itemPositionToPresenter.positionItemFragment(null,0,1, false);
+        itemPositionToPresenter.positionItemFragment(null, pref.getString("name",""), 0,1, false);
         Log.i(LOG_TAG, "onResume attached listener");
         if(!isTab)
             recyclerView.setLayoutManager(new LinearLayoutManager(context));

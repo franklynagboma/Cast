@@ -93,6 +93,7 @@ public class RecyclerItemAdapter extends RecyclerView.Adapter<RecyclerItemAdapte
 
         //Randomize the circular index color and set resource to imageHolder.
         int res = circularFrame.get(new Random().nextInt(circularFrame.size()));
+        //show cast view.
         holder.imageHolder.setBackgroundResource(res);
         saveCircularFramePosition.add(res);
 
@@ -114,7 +115,7 @@ public class RecyclerItemAdapter extends RecyclerView.Adapter<RecyclerItemAdapte
                 //arguments = position-> for cast item while true to tell it being clinked
                 Log.i(LOG_TAG, "Res position " + position
                         +"name" + castItems.getCastName());
-                itemPositionToPresenter.positionItemFragment(castItemsList,
+                itemPositionToPresenter.positionItemFragment(castItemsList, "",
                         saveCircularFramePosition.get(position), position, true);
                 //show cast details on new Fragment.
                 dynamicFragment.changeToDetailsFragment();

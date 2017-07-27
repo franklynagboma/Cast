@@ -89,6 +89,7 @@ public class CompleteSignUpPresenter implements Constant.CompleteSignUpToPresent
                         .startActivity("password/Passwords not equal");
             }
             else {
+                Log.i(LOG_TAG, "submit credentials");
                 String getName = sName +" "+ oNames;// oNames may contain >1 names with space
                 String[] getAllName = getName.split(" ");//split space to get names as a whole
                 /**
@@ -104,8 +105,8 @@ public class CompleteSignUpPresenter implements Constant.CompleteSignUpToPresent
                 // trim the space at the ending and send al to model
                 getName = getName.trim();
                 //save name and password for user login when logout
-                saveDetails = getName+"?"+ pPassword+"?"+gender+"?"+uDob
-                        +"?"+mobile+"?"+tTitle+"?"+uSummary;
+                saveDetails = getName+"?"+pPassword+"?"+gender+"?"+uDob
+                        +"?"+mMobile+"?"+tTitle+"?"+uSummary;
                 presenterSendSignUpToModel.signUpInfo(uId, photo, email, gender,
                         new CustomDataFormat().getDateFormat(new Date(),"m/y"),
                         getName,mMobile, tTitle, pPassword, uDob, uSummary, context);

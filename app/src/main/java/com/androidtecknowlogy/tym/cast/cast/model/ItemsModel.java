@@ -49,7 +49,7 @@ public class ItemsModel {
         this.itemModelToPresenter = itemModelToPresenter;
     }
 
-    public void attachedDataListener() {
+    public void attachedDataListener(final String userName) {
         //showProgress("Cast","Loading....");
 
         if(valueEventListener == null) {
@@ -66,8 +66,10 @@ public class ItemsModel {
                                 Log.e(LOG_TAG, "obj Cast");
                                 //store castItems in list
                                 CastItems castItems = dataSnap.getValue(CastItems.class);
-                                Log.e(LOG_TAG, "From fire base " + castItems.getCastName());
-                                AppController.detailsCastItems.add(castItems);
+                                //check the current user so as not to display
+                                // the user content on the view.
+                                if(!userName.equalsIgnoreCase(castItems.getCastName()))
+                                    AppController.detailsCastItems.add(castItems);
                             }
                             //get the admin items
                             else if(obj instanceof String) {

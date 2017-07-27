@@ -45,12 +45,12 @@ public class ItemsPresenter implements Constant.ItemsSendItemPositionToPresenter
      * @param position
      */
     @Override
-    public void positionItemFragment(List<CastItems> castItemsList,
+    public void positionItemFragment(List<CastItems> castItemsList, String userName,
                                      int itemPosition, int position, boolean value) {
         if(!value) {
             //call attach and detach data listener.
             if(position == 1)
-                model.attachedDataListener();
+                model.attachedDataListener(userName);
 
             else
                 model.detachDataListener();

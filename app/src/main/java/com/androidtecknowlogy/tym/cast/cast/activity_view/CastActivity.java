@@ -63,7 +63,7 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
     public final static String CAST_ITEM = "cast_item";
     private static final String EVENT_FRAG = "event_frag";
     private final String DETAILS_FRAG = "detail_fragment";
-    private boolean profile_details_fragment;
+    private boolean menuCheck;
     public final static String COMPLETE = "complete";
     private String FRAG = "";
     private String pauseFrag;
@@ -206,6 +206,8 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
     private void castCallsItemFragment(int res) {
         //check if it from tab then, hide the detail fragment
         //detailsFrame = (FrameLayout) findViewById(R.id.cast_details_fragment);
+        menuCheck = false;
+
         if(isTab)
             detailsFrame.setVisibility(View.VISIBLE);
         if(getSupportFragmentManager().findFragmentByTag(CAST_ITEM) == null )
@@ -220,7 +222,8 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
 
     private void profileCallsDetailsFragment() {
         //call detailsFragment for mobile devices.
-        profile_details_fragment = true;
+        menuCheck = true;
+
         if(!isTab)
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.cast_item_screen, detailsFragment)
@@ -236,9 +239,13 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
                 pref.getString("dob", ""),pref.getString("gender", ""),
                 pref.getString("mobile", ""), pref.getString("email", ""),
                 pref.getString("summary","") );
+
+
     }
     private void editCallsCompleteSignUpFragment(int res){
-        profile_details_fragment = false;
+
+        menuCheck = false;
+
         //send bundle to fragment to hide passwords text field.
         //firstly, clear arguments
         CompleteSignUpFragment completeSignUpFragment = new CompleteSignUpFragment();
@@ -459,7 +466,8 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
      */
     @Override
     public void changeToDetailsFragment() {
-        profile_details_fragment = true;
+        menuCheck = false;
+
         if(!isTab)
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.cast_item_screen, detailsFragment, DETAILS_FRAG)
@@ -487,16 +495,27 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
             this.finish();
     }
 
+    /**
+     * The is called before onCreateOptionMenu is called.
+     * @param menu
+     * @return
+     */
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem menuItem = menu.findItem(R.id.action_edit);
+
+        if(menuCheck)
+            menuItem.setVisible(true);
+        else
+            menuItem.setVisible(false);
+        return true;
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_cast, menu);
         //get menu item for edit and hide if not on person detail
-        MenuItem menuItem = menu.findItem(R.id.action_edit);
-        if(!profile_details_fragment)
-            menuItem.setVisible(false);
-        else
-            menuItem.setVisible(true);
         //inflate menu share
 
         return true;

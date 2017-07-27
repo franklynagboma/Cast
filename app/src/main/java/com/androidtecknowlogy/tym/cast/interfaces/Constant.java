@@ -24,7 +24,7 @@ public interface Constant {
      */
     //get item position from recycler-ItemsFragment-Presenter
     interface ItemsSendItemPositionToPresenter {
-        void positionItemFragment(List<CastItems> castItemsList,
+        void positionItemFragment(List<CastItems> castItemsList, String userName,
                                   int itemPosition, int position, boolean value);
     }
     //call ItemFragment recycler view.
