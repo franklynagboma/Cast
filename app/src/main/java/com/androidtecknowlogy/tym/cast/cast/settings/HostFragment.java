@@ -1,4 +1,4 @@
-package com.androidtecknowlogy.tym.cast.settings;
+package com.androidtecknowlogy.tym.cast.cast.settings;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
