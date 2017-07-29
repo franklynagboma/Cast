@@ -22,12 +22,14 @@ public class AppController extends Application {
 
     private static AppController instance;
     public static FirebaseDatabase firebaseDatabase;
-    public static final String CASTS = "Casts";
-    public static final String EVENTS = "Events";
-    public static final String ADMINS = "Admins";
+    public final String CASTS = "Casts";
+    public final String EVENTS = "Events";
+    public final String ADMINS = "Admins";
+    public final String SETTINGS = "Settings";
     public static DatabaseReference castsData;
     public static DatabaseReference adminsData;
     public static DatabaseReference eventList;
+    public static DatabaseReference settingsData;
     public static List<CastItems> detailsCastItems;
     public static String getLast10Digit = "";
     public static String getSeparatedDigit = "";
@@ -43,11 +45,13 @@ public class AppController extends Application {
         firebaseDatabase = FirebaseDatabase.getInstance();
         //initialize fire base database
         castsData = firebaseDatabase.getReference()
-                .child(AppController.CASTS);
+                .child(CASTS);
         adminsData = firebaseDatabase.getReference()
-                .child(AppController.ADMINS);
+                .child(ADMINS);
         eventList = firebaseDatabase.getReference()
-                .child(AppController.EVENTS);
+                .child(EVENTS);
+        settingsData = firebaseDatabase.getReference()
+                .child(SETTINGS);
 
         detailsCastItems = new ArrayList<>();
 
