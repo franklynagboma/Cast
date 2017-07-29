@@ -6,6 +6,7 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -33,6 +34,8 @@ import com.androidtecknowlogy.tym.cast.cast.fragment_view.DetailsFragment;
 import com.androidtecknowlogy.tym.cast.cast.fragment_view.EventFragment;
 import com.androidtecknowlogy.tym.cast.cast.fragment_view.ItemsFragment;
 import com.androidtecknowlogy.tym.cast.complete_signup.activity_view.GoogleSignInActivity;
+import com.androidtecknowlogy.tym.cast.settings.HostFragment;
+import com.androidtecknowlogy.tym.cast.settings.SettingsFragment;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
@@ -61,8 +64,9 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
     private CustomBottomNavigationView bottomNavigationView;
     //private BottomNavigationView bottomNavigationView;
     public final static String CAST_ITEM = "cast_item";
-    private static final String EVENT_FRAG = "event_frag";
     private final String DETAILS_FRAG = "detail_fragment";
+    private static final String SETTINGS_FRAG = "settings_frag";
+    private static final String EVENT_FRAG = "event_frag";
     private boolean menuCheck;
     public final static String COMPLETE = "complete";
     private String FRAG = "";
@@ -72,8 +76,10 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
     private EventsPresenter eventsPresenter;
     private ItemsFragment itemsFragment;
     private DetailsFragment detailsFragment;
+    private HostFragment settingsFragment;
     private EventFragment eventFragment;
     private  boolean isTab;
+    private boolean quit;
     private boolean fabProcess;
     private boolean fabMenuClick;
     private FabLayoutProcess fabLayoutProcess;
@@ -116,10 +122,12 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
         setContentView(R.layout.activity_cast);
         ButterKnife.bind(this);
         pref = PreferenceManager.getDefaultSharedPreferences(this);
+        PreferenceManager.setDefaultValues(this, R.xml.settings, false);
 
         //Fragment is dynamic,
         itemsFragment = new ItemsFragment();
         detailsFragment = new DetailsFragment();
+        settingsFragment = new HostFragment();
         //eventFragment = new EventFragment();
 
         //invalidateOptionsMenu(); this is mostly used to redraw menu item.
@@ -194,6 +202,7 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
                                     break;*/
                                 case R.id.action_settings:
                                     Log.e(LOG_TAG, "nav settings clicked");
+                                    settingsCallsSettingsFragment(R.id.cast_item_screen);
                                     break;
                             }
 
@@ -205,8 +214,8 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
 
     private void castCallsItemFragment(int res) {
         //check if it from tab then, hide the detail fragment
-        //detailsFrame = (FrameLayout) findViewById(R.id.cast_details_fragment);
         menuCheck = false;
+        quit = false;
 
         if(isTab)
             detailsFrame.setVisibility(View.VISIBLE);
@@ -223,6 +232,7 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
     private void profileCallsDetailsFragment() {
         //call detailsFragment for mobile devices.
         menuCheck = true;
+        quit = false;
 
         if(!isTab)
             getSupportFragmentManager().beginTransaction()
@@ -245,6 +255,7 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
     private void editCallsCompleteSignUpFragment(int res){
 
         menuCheck = false;
+        quit = false;
 
         //send bundle to fragment to hide passwords text field.
         //firstly, clear arguments
@@ -262,7 +273,6 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
         bundle.putString("summary", pref.getString("summary",""));
         completeSignUpFragment.setArguments(bundle);
         //check if it from tab then, hide the detail fragment
-        //detailsFrame = (FrameLayout) findViewById(R.id.cast_details_fragment);
         if(isTab)
             detailsFrame.setVisibility(View.GONE);
         if(getSupportFragmentManager().findFragmentByTag(COMPLETE) == null)
@@ -271,6 +281,18 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
                             COMPLETE).commit();
     }
 
+    private void settingsCallsSettingsFragment(int res) {
+        //check if it from tab then, hide the detail fragment
+        menuCheck = false;
+        quit = false;
+
+        if(isTab)
+            detailsFrame.setVisibility(View.GONE);
+        if(getSupportFragmentManager().findFragmentByTag(SETTINGS_FRAG) == null )
+            getSupportFragmentManager().beginTransaction()
+                    .replace(res, settingsFragment,
+                            SETTINGS_FRAG).commit();
+    }
     @Override
     public void activity() {
         //activity bottom nav cast item for mobile while call cast item with detail visible
@@ -356,7 +378,8 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        Log.i(LOG_TAG, "Settings Page accessed");
+                        //delay to load.
+                        settingsCallsSettingsFragment(R.id.cast_item_screen);
                     }
                 },50);
             }
@@ -481,20 +504,49 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
     @Override
     public void onBackPressed() {
 
+
         if(!isTab) {
             if(getSupportFragmentManager().findFragmentByTag(DETAILS_FRAG) != null
                 && getSupportFragmentManager().findFragmentByTag(DETAILS_FRAG).isVisible()) {
+                quit = false;
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.cast_item_screen, itemsFragment, CAST_ITEM)
                         .commit();
             }
-            else
-                this.finish();
+            else {
+                performQuit();
+            }
+        }
+
+        else {
+            performQuit();
+        }
+    }
+
+    private void performQuit() {
+        if(!quit) {
+            quit = true;
+            //delay for 5seconds for user to access quit true else reset quit to false.
+            new Runnable() {
+                @Override
+                public void run() {
+                    new CountDownTimer(5000,5000) {
+                        @Override
+                        public void onTick(long millisUntilFinished) {
+                        }
+
+                        @Override
+                        public void onFinish() {
+                            quit = false;
+                        }
+                    }.start();
+                }
+            }.run();
+            Toast.makeText(this, "Again to quit", Toast.LENGTH_SHORT).show();
         }
         else
             this.finish();
     }
-
     /**
      * The is called before onCreateOptionMenu is called.
      * @param menu

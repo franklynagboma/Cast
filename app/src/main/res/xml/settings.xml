@@ -3,18 +3,20 @@
 
     <PreferenceCategory
         android:title="@string/pref_personality_title"
-        android:key="@string/pref_personality">
+        android:key="@string/pref_personality_key">
 
         <ListPreference
             android:title="@string/pref_list_title"
-            android:key="@string/pref_list"
+            android:key="@string/pref_list_key"
+            android:defaultValue="@string/every_one"
             android:summary="@string/every_one"
             android:entries="@array/pref_entity_entry"
-            android:entryValues="@array/pref_entity_entry"/>
+            android:entryValues="@array/pref_entity_entry" />
 
         <ListPreference
             android:title="@string/pref_cast_list_title"
-            android:key="@string/pref_cast_list"
+            android:key="@string/pref_cast_list_key"
+            android:defaultValue="@string/as_they_are_created"
             android:summary="@string/as_they_are_created"
             android:entries="@array/pref_cast_entity_entry"
             android:entryValues="@array/pref_cast_entity_entry"/>
@@ -22,7 +24,7 @@
 
     <Preference
         android:title="@string/pref_reset_title"
-        android:key="@string/pref_reset"
+        android:key="@string/pref_reset_key"
         android:summary="@string/reset_summary"
         android:selectable="true"
         android:enabled="true"/>
