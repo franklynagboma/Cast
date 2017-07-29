@@ -1,6 +1,9 @@
-package com.franklyn.info.helper.io;
+package com.androidtecknowlogy.tym.cast.helper.io;
 
 import android.widget.Filter;
+
+import com.androidtecknowlogy.tym.cast.helper.adpater.RecyclerItemAdapter;
+import com.androidtecknowlogy.tym.cast.helper.pojo.CastItems;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +12,7 @@ import java.util.List;
  * Created by AGBOMA franklyn on 7/27/17.
  */
 
-public class CustomFilter{/* extends Filter {
+public class CustomFilter  extends Filter {
 
     private RecyclerItemAdapter itemAdapter;
     private List<CastItems> castItemsList;
@@ -24,12 +27,12 @@ public class CustomFilter{/* extends Filter {
     }
 
 
-    *//**
+    /**
      * constraint charSequence contains the proposed  filter string
      * that is query to search for.
-     * @param constraint
+      * @param constraint
      * @return
-     *//*
+     */
     @Override
     protected FilterResults performFiltering(CharSequence constraint) {
         FilterResults filterResults = new FilterResults();
@@ -71,5 +74,5 @@ public class CustomFilter{/* extends Filter {
 
         itemAdapter.castItemsList = (ArrayList<CastItems>) results.values;
         itemAdapter.notifyDataSetChanged();//refresh adapter.
-    }*/
+    }
 }

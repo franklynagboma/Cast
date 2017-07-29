@@ -127,8 +127,9 @@ public class ItemsFragment extends Fragment implements Constant.PresenterCallsIt
 
     @Override
     public boolean onQueryTextChange(String query) {
-        //itemAdapter.getFilter().filter(query);
-        query = query.toLowerCase();
+        itemAdapter.getFilter().filter(query);
+        return false;
+        /*query = query.toLowerCase();
         Log.i(LOG_TAG, "Previous is empty: " + AppController.detailsCastItems.isEmpty()
                 + " Size: " + AppController.detailsCastItems.size());
         List<CastItems> castItems = new ArrayList<>();
@@ -142,7 +143,7 @@ public class ItemsFragment extends Fragment implements Constant.PresenterCallsIt
         Log.i(LOG_TAG, "castItems is empty = " + castItems.isEmpty());
         //itemAdapter.setFilter(!castItems.isEmpty() ? castItems : AppController.detailsCastItems);
         itemAdapter.setFilter(castItems);
-        return true;
+        return true;*/
 
     }
 

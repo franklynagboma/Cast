@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -17,6 +19,7 @@ import android.widget.TextView;
 
 import com.androidtecknowlogy.tym.cast.R;
 import com.androidtecknowlogy.tym.cast.cast.fragment_view.ItemsFragment;
+import com.androidtecknowlogy.tym.cast.helper.io.CustomFilter;
 import com.androidtecknowlogy.tym.cast.interfaces.Constant;
 import com.androidtecknowlogy.tym.cast.helper.pojo.CastItems;
 import com.androidtecknowlogy.tym.cast.helper.view.CircularTransform;
@@ -30,11 +33,14 @@ import java.util.Random;
  * Created by AGBOMA franklyn on 6/18/17.
  */
 
-public class RecyclerItemAdapter extends RecyclerView.Adapter<RecyclerItemAdapter.LayoutHolder> {
+public class RecyclerItemAdapter extends RecyclerView.Adapter<RecyclerItemAdapter.LayoutHolder>
+        implements Filterable{
 
     private final String LOG_TAG = RecyclerItemAdapter.class.getSimpleName();
     private Context context;
     public List<CastItems> castItemsList;
+    //private List<CastItems> filteredList;
+    private CustomFilter filter;
     private boolean isTab;
     private Constant.ItemsSendItemPositionToPresenter itemPositionToPresenter;
     private ItemsFragment.DynamicFragment dynamicFragment;
@@ -60,6 +66,7 @@ public class RecyclerItemAdapter extends RecyclerView.Adapter<RecyclerItemAdapte
          */
         this.context = context;
         this.castItemsList = castItemsList;
+        //this.filteredList = castItemsList;
         this.isTab = isTab;
         saveCircularFramePosition = new ArrayList<>();
         this.itemPositionToPresenter = itemPositionToPresenter;
@@ -140,15 +147,21 @@ public class RecyclerItemAdapter extends RecyclerView.Adapter<RecyclerItemAdapte
         return castItemsList.size();
     }
 
-    public void setFilter(List<CastItems> castItems) {
+    /*public void setFilter(List<CastItems> castItems) {
         //use clear intend of re-initializing so as to remove all item on castItemsList
         Log.i(LOG_TAG, "On filter castItemsList size 1= " + castItems.size());
         castItemsList = new ArrayList<>();
         castItemsList.addAll(castItems);
         Log.i(LOG_TAG, "On filter castItemsList size 2= " + castItemsList.size());
         notifyDataSetChanged();
-    }
+    }*/
 
+    @Override
+    public Filter getFilter() {
+        if(null == filter)
+            filter = new CustomFilter(this, castItemsList);
+        return filter;
+    }
 
     class LayoutHolder extends RecyclerView.ViewHolder{
 
