@@ -4,12 +4,14 @@ import android.app.Application;
 
 import com.androidtecknowlogy.tym.cast.R;
 import com.androidtecknowlogy.tym.cast.helper.pojo.CastItems;
+import com.androidtecknowlogy.tym.cast.helper.pojo.Settings;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -26,10 +28,13 @@ public class AppController extends Application {
     public final String EVENTS = "Events";
     public final String ADMINS = "Admins";
     public final String SETTINGS = "Settings";
+    public static final String SHOW_DOB = "showDob";
+    public static final String CAST_UPDATE = "castUpdate";
     public static DatabaseReference castsData;
     public static DatabaseReference adminsData;
     public static DatabaseReference eventList;
     public static DatabaseReference settingsData;
+    public static HashMap<String, Settings> settingMap;
     public static List<CastItems> detailsCastItems;
     public static String getLast10Digit = "";
     public static String getSeparatedDigit = "";
@@ -54,6 +59,7 @@ public class AppController extends Application {
                 .child(SETTINGS);
 
         detailsCastItems = new ArrayList<>();
+        settingMap = new HashMap<>();
 
     }
 

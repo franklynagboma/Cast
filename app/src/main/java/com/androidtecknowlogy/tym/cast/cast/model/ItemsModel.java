@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.util.Log;
 
+import com.androidtecknowlogy.tym.cast.helper.pojo.Settings;
 import com.androidtecknowlogy.tym.cast.interfaces.Constant;
 import com.androidtecknowlogy.tym.cast.app.AppController;
 import com.androidtecknowlogy.tym.cast.helper.pojo.CastItems;
@@ -61,21 +62,35 @@ public class ItemsModel {
                         for(DataSnapshot dataSnap : dataSnapshot.getChildren()) {
                             Object obj = dataSnap.getValue();
 
+                            Log.i(LOG_TAG, "obj 1 " + obj);
+
                             //get the cast items
                             if(obj instanceof Map) {
-                                Log.e(LOG_TAG, "obj Cast");
+                                Log.e(LOG_TAG, "obj " + obj);
                                 //store castItems in list
                                 CastItems castItems = dataSnap.getValue(CastItems.class);
-                                //check the current user so as not to display
-                                // the user content on the view.
-                                if(!userName.equalsIgnoreCase(castItems.getCastName()))
-                                    AppController.detailsCastItems.add(castItems);
+                                //store settings in list
+                                Settings settings = dataSnap.getValue(Settings.class);
+
+                                //check which map class was seen.
+                                String getKeySnap = dataSnap.getKey();
+                                //for settings map class.
+                                if (getKeySnap.contains("@gmail")) {
+                                    AppController.settingMap.put(getKeySnap, settings);
+                                }
+                                else {
+                                    //for castItems map class.
+                                    //check the current user so as not to display
+                                    // the user content on the view.
+                                    if(!userName.equalsIgnoreCase(castItems.getCastName()))
+                                        AppController.detailsCastItems.add(castItems);
+                                }
                             }
                             //get the admin items
                             else if(obj instanceof String) {
-                                Log.e(LOG_TAG, "obj String");
+                                Log.i(LOG_TAG, "obj String");
                                 String admins = dataSnap.getValue(String.class);
-                                Log.e(LOG_TAG, admins + " hit server and added");
+                                Log.i(LOG_TAG, admins + " hit server and added");
                             }
                         }
                         //dismiss dialog.
@@ -92,6 +107,7 @@ public class ItemsModel {
             };
             AppController.castsData.addValueEventListener(valueEventListener);
             AppController.adminsData.addValueEventListener(valueEventListener);
+            AppController.settingsData.addValueEventListener(valueEventListener);
         }
     }
 
@@ -99,6 +115,7 @@ public class ItemsModel {
         if(valueEventListener != null) {
             AppController.castsData.removeEventListener(valueEventListener);
             AppController.adminsData.removeEventListener(valueEventListener);
+            AppController.settingsData.removeEventListener(valueEventListener);
         }
         valueEventListener = null; //set back to null
         /**

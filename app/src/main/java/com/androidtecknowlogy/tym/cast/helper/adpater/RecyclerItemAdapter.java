@@ -84,19 +84,8 @@ public class RecyclerItemAdapter extends RecyclerView.Adapter<RecyclerItemAdapte
     @Override
     public void onBindViewHolder(final LayoutHolder holder, final int position) {
 
-        final CastItems castItems = castItemsList.get(position);
-
         //Set views display
-        /*RelativeLayout.LayoutParams positionView = (RelativeLayout.LayoutParams)
-                holder.layoutHolder.getLayoutParams();
-        if(countLeft == position){
-            positionView.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
-            holder.layoutHolder.setLayoutParams(positionView);
-        }
-        else if(countRight == position) {
-            positionView.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
-            holder.layoutHolder.setLayoutParams(positionView);
-        }*/
+        final CastItems castItems = castItemsList.get(position);
 
         //Randomize the circular index color and set resource to imageHolder.
         int res = circularFrame.get(new Random().nextInt(circularFrame.size()));
@@ -131,14 +120,10 @@ public class RecyclerItemAdapter extends RecyclerView.Adapter<RecyclerItemAdapte
         holder.textHolder.setOnClickListener(listener);
 
         Animation animation = AnimationUtils.loadAnimation(context,
-                (position > lastPosition) ? R.anim.up : R.anim.down);
+                (position > lastPosition)
+                        ?android.R.anim.slide_in_left :android.R.anim.slide_in_left);
         holder.textHolder.setAnimation(animation);
         lastPosition = position;
-
-        //add position count left
-        //countLeft += position;
-        //add position count right
-        //countRight += position;
     }
 
     @Override

@@ -170,7 +170,7 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
                     castSummary.setText(summary);
                 }
             }
-        },1500);
+        },100);
     }
 
     @OnClick

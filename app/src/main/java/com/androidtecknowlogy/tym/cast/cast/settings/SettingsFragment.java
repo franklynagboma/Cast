@@ -53,11 +53,13 @@ public class SettingsFragment extends PreferenceFragment
                 findPreference(getString(R.string.pref_list_key));
         listPreference2 = (ListPreference)
                 findPreference(getString(R.string.pref_cast_list_key));
+        //set up summary from previous values
+        if (AppController.settingMap.containsKey(castEmail)) {
+            listPreference1.setSummary(AppController.settingMap.get(castEmail).getShowDob());
+            listPreference2.setSummary(AppController.settingMap.get(castEmail).getCastUpdate());
+        }
         //get values from preference
         getListPreferenceValues();
-        //set up summary from values
-        listPreference1.setSummary(previousValue1);
-        listPreference2.setSummary(previousValue2);
 
         Preference resetPreference = findPreference(getString(R.string.pref_reset_key));
 
@@ -198,6 +200,12 @@ public class SettingsFragment extends PreferenceFragment
     }
 
     private void savePreference(String key, String value) {
+        //change key name so as to relate with Settings pojo.
+        if(key.equals(getString(R.string.pref_list_title)))
+            key = AppController.SHOW_DOB;
+        if(key.equals(getString(R.string.pref_cast_list_title)))
+            key = AppController.CAST_UPDATE;
+
         //update online db.
         startLoading();
         AppController.settingsData
