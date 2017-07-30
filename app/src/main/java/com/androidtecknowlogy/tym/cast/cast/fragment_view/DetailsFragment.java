@@ -14,7 +14,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.androidtecknowlogy.tym.cast.R;
+import com.androidtecknowlogy.tym.cast.app.AppController;
 import com.androidtecknowlogy.tym.cast.cast.activity_view.CastActivity;
+import com.androidtecknowlogy.tym.cast.helper.pojo.Settings;
 import com.androidtecknowlogy.tym.cast.interfaces.Constant;
 import com.androidtecknowlogy.tym.cast.helper.view.CircularTransform;
 import com.squareup.picasso.Picasso;
@@ -33,6 +35,8 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
     private final String LOG_TAG = DetailsFragment.class.getSimpleName();
 
     private Context context;
+    private boolean user;
+    private String getShowDob, getDevice;
     private String getPhoto = "" , getEmail = "", getGender = "",
             getMonth_year = "", getName = "", getMobile = "", getTitle = "";
 
@@ -83,8 +87,6 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_details, container, false);
         ButterKnife.bind(this, view);
-        if(null != context)
-            Log.i(LOG_TAG, "context not null");
 
         return view;
     }
@@ -117,6 +119,7 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
                                               String gender, String mobile,
                                               String email, String summary) {
 
+        user = true;
         showDetails(0, image, email, gender, "", name, mobile, title, dob, summary);
     }
 
@@ -126,6 +129,7 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
                         final String mobile, final String title, final String dob,
                         final String summary) {
 
+        user = false;
         Log.i(LOG_TAG, "Details \n" + photo +"\n"+ email +"\n"+ gender
                 +"\n"+ month_year +"\n"+ name +"\n"+ mobile +"\n"+ title);
         showDetails(itemPosition, photo,email,gender,month_year,name,mobile,title,dob,summary);
@@ -146,6 +150,11 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
                              final String mobile, final String title, final String dob,
                              final String summary) {
 
+        String[] getEmailOffDot = email.split("\\.");
+        //check if user has changed the settings on their devices
+        if (AppController.settingMap.containsKey(getEmailOffDot[0]))
+            getSettingsChangedVariables(getEmailOffDot[0]);
+
         //delay to show details
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -164,10 +173,25 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
                     castName.setText(name);
                     castTitle.setText(title);
                     castGender.setText(gender);
-                    castDob.setText(getResources().getString(R.string.dob,dob));
+
+                    //if this fragment was access by the device owner
+                    if(user) {
+                        castDob.setText(getDevice.equals(AppController.currentDevice)
+                                ? getResources().getString(R.string.dob,dob)
+                                : (getShowDob.equals(getString(R.string.every_one))
+                                || getShowDob.equals(getString(R.string.current_user))
+                                ?getResources().getString(R.string.dob,dob) :""));
+                    }
+                    else {
+                        //if it was access by other users
+                        castDob.setText(getShowDob.equals(getString(R.string.every_one))
+                                ? getResources().getString(R.string.dob,dob) : "");
+                    }
+
                     castMobile.setText(mobile);
                     castEmail.setText(email);
                     castSummary.setText(summary);
+                    user = false;
                 }
             }
         },100);
@@ -182,6 +206,10 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
     @OnClick(R.id.mail_message)
     public void onMailClicked(){}
 
-    /*@OnClick(R.id.fab_edit)
-    public void onFabEditButtonClicked(){}*/
+
+    private void getSettingsChangedVariables(String emailNoDot) {
+        Settings getSettings = AppController.settingMap.get(emailNoDot);
+        getShowDob = getSettings.getShowDob();
+        getDevice = getSettings.getDevice();
+    }
 }

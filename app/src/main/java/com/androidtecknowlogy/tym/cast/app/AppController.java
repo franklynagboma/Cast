@@ -1,6 +1,7 @@
 package com.androidtecknowlogy.tym.cast.app;
 
 import android.app.Application;
+import android.os.Build;
 
 import com.androidtecknowlogy.tym.cast.R;
 import com.androidtecknowlogy.tym.cast.helper.pojo.CastItems;
@@ -23,6 +24,7 @@ public class AppController extends Application {
     private final String LOG_TAG = AppController.class.getSimpleName();
 
     private static AppController instance;
+    public static final String currentDevice = Build.MANUFACTURER.toUpperCase() +" "+ Build.MODEL;
     public static FirebaseDatabase firebaseDatabase;
     public final String CASTS = "Casts";
     public final String EVENTS = "Events";

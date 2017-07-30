@@ -11,7 +11,10 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+import android.text.InputType;
 import android.util.Log;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.androidtecknowlogy.tym.cast.R;
 import com.androidtecknowlogy.tym.cast.app.AppController;
@@ -26,7 +29,7 @@ public class SettingsFragment extends PreferenceFragment
     private final String LOG_TAG = SettingsFragment.class.getSimpleName();
 
     private SharedPreferences pref;
-    private String castEmail;
+    private String castEmail, password;
     private ProgressDialog loading;
     private ListPreference listPreference1;
     private ListPreference listPreference2;
@@ -40,6 +43,7 @@ public class SettingsFragment extends PreferenceFragment
         pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
         //get cast user email for store settings on database for identification.
         String[] removeDot = pref.getString("email", "").split("\\.");
+        password = pref.getString("password", "");
         castEmail = removeDot[0];
         Log.i(LOG_TAG, "Email " + castEmail);
         //add view
@@ -135,31 +139,40 @@ public class SettingsFragment extends PreferenceFragment
         //if instance of preference that is, Reset.
         else {
             AlertDialog.Builder builder = new AlertDialog.Builder(preference.getContext());
+            final EditText passwordText = new EditText(preference.getContext());
+            passwordText.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            passwordText.setHint("password");
             builder.setTitle("Warning!!!")
                     .setMessage("This will clear all previous settings done on CAST")
+                    .setView(passwordText)
                     .setPositiveButton("Clear", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             //clear settings form online database.
 
-                            String getValue1 = getString(R.string.every_one);
-                            String getValue2 = getString(R.string.as_they_are_created);
-                            listPreference1.setValue(getValue1);
-                            listPreference2.setValue(getValue2);
+                            if(passwordText.getText().toString().equals(password)) {
+                                String getValue1 = getString(R.string.every_one);
+                                String getValue2 = getString(R.string.as_they_are_created);
+                                listPreference1.setValue(getValue1);
+                                listPreference2.setValue(getValue2);
 
-                            //bind two view again.
-                            bindPreferenceSummaryToView(findPreference(
-                                    getString(R.string.pref_list_key)));
-                            bindPreferenceSummaryToView(findPreference(
-                                    getString(R.string.pref_cast_list_key)));
-                            //update online db.
-                            AppController.settingsData.child(listPreference1.getTitle().toString())
-                                    .setValue(getValue1);
-                            AppController.settingsData.child(listPreference2.getTitle().toString())
-                                    .setValue(getValue2);
-                            dialog.dismiss();
-                            startLoading();
-                            stopLoading();
+                                //bind two view again.
+                                bindPreferenceSummaryToView(findPreference(
+                                        getString(R.string.pref_list_key)));
+                                bindPreferenceSummaryToView(findPreference(
+                                        getString(R.string.pref_cast_list_key)));
+                                //update online db.
+                                AppController.settingsData.child(listPreference1.getTitle().toString())
+                                        .setValue(getValue1);
+                                AppController.settingsData.child(listPreference2.getTitle().toString())
+                                        .setValue(getValue2);
+                                dialog.dismiss();
+                                startLoading("");
+                                stopLoading();
+                            }
+                            else
+                                Toast.makeText(getActivity(), "wrong password", Toast.LENGTH_SHORT)
+                                        .show();
                         }
                     })
                     .setNegativeButton("Abort", new DialogInterface.OnClickListener() {
@@ -177,7 +190,7 @@ public class SettingsFragment extends PreferenceFragment
         return true;
     }
 
-    private void startLoading() {
+    private void startLoading(String getValue) {
         Log.i(LOG_TAG, "loading...");
         if(loading == null)
             loading = new ProgressDialog(getActivity());
@@ -185,6 +198,14 @@ public class SettingsFragment extends PreferenceFragment
             loading.setMessage("saving changes...");
             loading.setCancelable(false);
             loading.show();
+            //for device name, check if value is = Just this device
+            //if yes value, no empty.
+            AppController.settingsData
+                    .child(castEmail)
+                    .child("device")
+                    .setValue(getValue.equals(getString(R.string.just_this_device))
+                            ?AppController.currentDevice
+                            :"");
         }
     }
     private void stopLoading() {
@@ -207,13 +228,12 @@ public class SettingsFragment extends PreferenceFragment
             key = AppController.CAST_UPDATE;
 
         //update online db.
-        startLoading();
+        startLoading(value);
         AppController.settingsData
                 .child(castEmail)
                 .child(key)
                 .setValue(value);
         stopLoading();
-        //list1 = list2 = false;
         getListPreferenceValues();
     }
     private void getListPreferenceValues() {

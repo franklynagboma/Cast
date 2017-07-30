@@ -7,14 +7,15 @@ package com.androidtecknowlogy.tym.cast.helper.pojo;
 public class Settings {
 
 
-    private String showDob, castUpdate;
+    private String showDob, castUpdate, device;
 
     public Settings() {
     }
 
-    public Settings(String showDob, String castUpdate) {
+    public Settings(String showDob, String castUpdate, String device) {
         this.showDob = showDob;
         this.castUpdate = castUpdate;
+        this.device = device;
     }
 
     public String getShowDob() {
@@ -31,5 +32,13 @@ public class Settings {
 
     public void setCastUpdate(String castUpdate) {
         this.castUpdate = castUpdate;
+    }
+
+    public String getDevice() {
+        return device;
+    }
+
+    public void setDevice(String device) {
+        this.device = device;
     }
 }
