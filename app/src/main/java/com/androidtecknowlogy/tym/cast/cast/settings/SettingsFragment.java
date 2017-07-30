@@ -140,7 +140,8 @@ public class SettingsFragment extends PreferenceFragment
         else {
             AlertDialog.Builder builder = new AlertDialog.Builder(preference.getContext());
             final EditText passwordText = new EditText(preference.getContext());
-            passwordText.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            passwordText.setInputType(InputType.TYPE_CLASS_TEXT
+                    | InputType.TYPE_TEXT_VARIATION_PASSWORD);
             passwordText.setHint("password");
             builder.setTitle("Warning!!!")
                     .setMessage("This will clear all previous settings done on CAST")

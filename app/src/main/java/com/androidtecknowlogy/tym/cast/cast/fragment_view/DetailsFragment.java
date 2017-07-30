@@ -176,15 +176,18 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
 
                     //if this fragment was access by the device owner
                     if(user) {
-                        castDob.setText(getDevice.equals(AppController.currentDevice)
+                        castDob.setText(getDevice != null &&
+                                getDevice.equals(AppController.currentDevice)
                                 ? getResources().getString(R.string.dob,dob)
-                                : (getShowDob.equals(getString(R.string.every_one))
-                                || getShowDob.equals(getString(R.string.current_user))
+                                : (getShowDob != null
+                                && (getShowDob.equals(getString(R.string.every_one))
+                                || getShowDob.equals(getString(R.string.current_user)))
                                 ?getResources().getString(R.string.dob,dob) :""));
                     }
                     else {
                         //if it was access by other users
-                        castDob.setText(getShowDob.equals(getString(R.string.every_one))
+                        castDob.setText(getShowDob != null
+                                && getShowDob.equals(getString(R.string.every_one))
                                 ? getResources().getString(R.string.dob,dob) : "");
                     }
 
