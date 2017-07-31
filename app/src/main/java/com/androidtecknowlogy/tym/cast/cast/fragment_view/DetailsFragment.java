@@ -1,6 +1,8 @@
 package com.androidtecknowlogy.tym.cast.cast.fragment_view;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -13,6 +15,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.androidtecknowlogy.tym.cast.R;
 import com.androidtecknowlogy.tym.cast.app.AppController;
@@ -37,7 +40,9 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
 
     private Context context;
     private boolean user;
+    private String getLast10DigitWithCountryCode, toEmail, toNumber;
     private String getShowDob, getDevice;
+    private final String CAST_SUBJECT = "#CAST";
     private String getPhoto = "" , getEmail = "", getGender = "",
             getMonth_year = "", getName = "", getMobile = "", getTitle = "";
 
@@ -177,6 +182,8 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
                     //set visibility back if ever it was changed
                     cousantProfile.setVisibility(View.INVISIBLE);
                     castProfile.setVisibility(View.VISIBLE);
+                    toEmail = email;
+                    toNumber = mobile;
 
                     //for Tab to not through null because this Fragment starts as the Activity does
                     //base on MVC pathern.
@@ -208,14 +215,64 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
                                 ? getResources().getString(R.string.dob,dob) : "");
                     }
 
-                    castMobile.setText(!AppController.isGuess ?mobile :"Cousant mobile");
-                    castEmail.setText(!AppController.isGuess ?email :"Cousant email");
+                    //remove the condition here, make condition before send to detail fragment.
+                    castMobile.setText(editUserMobile(mobile));
+                    castEmail.setText(email);
                     castSummary.setText(summary);
-                    user = false;
                 }
             }
         },100);
     }
+
+    @OnClick
+    public void onPhoneCallClicked(){
+        if(!user) {
+            Intent intent = new Intent(Intent.ACTION_CALL);
+            intent.setData(Uri.parse("tel:" + getLast10DigitWithCountryCode));
+            if(intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                sendToast("calling...");
+                startActivity(intent);
+            }
+        }
+        else
+            sendToast("call operation denied!");
+    }
+
+    @OnClick(R.id.sms)
+    public void onSmsClicked(){
+        if(!user) {
+            Intent intent = new Intent(Intent.ACTION_SENDTO);
+            intent.setData(Uri.parse("smsto:" + toNumber));
+            intent.putExtra("sms_body", CAST_SUBJECT);
+            if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                sendToast("sms...");
+                startActivity(intent);
+            }
+        }
+        else
+            sendToast("sms operation denied!");
+    }
+
+    /**
+     * Send mail to other users
+     */
+    @OnClick(R.id.mail_message)
+    public void onMailClicked(){
+        //for other users only
+        if(!user) {
+            Intent intent = new Intent(Intent.ACTION_SENDTO);
+            intent.setData(Uri.parse("mailto:"));
+            intent.putExtra(Intent.EXTRA_EMAIL, toEmail);
+            intent.putExtra(Intent.EXTRA_SUBJECT, CAST_SUBJECT);
+            if(intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                sendToast("mail...");
+                startActivity(intent);
+            }
+        }
+        else
+            sendToast("mail operation denied!");
+    }
+
 
     private void showCousantProfile(final String summary) {
 
@@ -230,19 +287,33 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
         }, 100);
 
     }
-    @OnClick
-    public void onPhoneCallClicked(){}
 
-    @OnClick(R.id.sms)
-    public void onSmsClicked(){}
-
-    @OnClick(R.id.mail_message)
-    public void onMailClicked(){}
-
-
+    private String editUserMobile (String mobile) {
+        /**
+         * Nigeria mobile number are in total of 11
+         * but to make calls considering here in Nigeria
+         * and outside Nigeria, the country code must be
+         * added to the last 10 digit of the mobile number
+         * Therefore, get the last 10 digit
+         */
+        String getMobile = mobile.substring(1);// replace string chas with the last 10 digit
+        Log.i(LOG_TAG, "Mobile with 10 digit " + getMobile);
+        getLast10DigitWithCountryCode = "+234"+getMobile;//get country code from sign up.
+        //perform separation operation with '-' after three numbers to display
+        String firstThree = mobile.substring(1,4);//first 3
+        String secondThree = mobile.substring(4,7);//second 3
+        String thirdThree = mobile.substring(7);//last 4
+        //get all and set EditText
+        getMobile = firstThree +" - "+ secondThree +" - "+ thirdThree;
+        return  getMobile;
+    }
     private void getSettingsChangedVariables(String emailNoDot) {
         Settings getSettings = AppController.settingMap.get(emailNoDot);
         getShowDob = getSettings.getShowDob();
         getDevice = getSettings.getDevice();
+    }
+
+    private void sendToast (String msg) {
+        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
     }
 }

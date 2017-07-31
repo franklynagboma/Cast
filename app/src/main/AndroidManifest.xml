@@ -6,6 +6,8 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     //Vibrate permission
     <uses-permission android:name="android.permission.VIBRATE"/>
+    //Call permission
+    <uses-permission android:name="android.permission.CALL_PHONE"/>
 
     <application
         android:name=".app.AppController"
@@ -21,7 +23,6 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -31,7 +32,15 @@
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan">
+            <intent-filter>
+                <action android:name="android.intent.action.SENDTO" />
+                <data android:scheme="mailto"/>
+                <data android:scheme="smsto"/>
+                <data android:mimeType="text/plain"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
         <activity
             android:name=".login.LoginActivity"
             android:label="@string/app_name"

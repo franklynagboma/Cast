@@ -60,6 +60,8 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
 
     private SharedPreferences pref;
     private SharedPreferences.Editor prefEdit;
+    private final String toCousantEmail = "franklyn1great@gmail.com";
+    private final String toCousantNumber = "08068046013";
     public static int orientation;
     private CustomBottomNavigationView bottomNavigationView;
     //private BottomNavigationView bottomNavigationView;
@@ -247,7 +249,8 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
         castUserToDetailFragment.CastSendUsersToDetailFragment(pref.getString("image", ""),
                 pref.getString("name", ""), pref.getString("title", ""),
                 pref.getString("dob", ""),pref.getString("gender", ""),
-                pref.getString("mobile", ""), pref.getString("email", ""),
+                !AppController.isGuess ?pref.getString("mobile", "") :toCousantNumber,
+                !AppController.isGuess ?pref.getString("email", "") :toCousantEmail,
                 pref.getString("summary","") );
 
 

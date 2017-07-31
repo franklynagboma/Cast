@@ -59,7 +59,7 @@ public class SettingsFragment extends PreferenceFragment
                 findPreference(getString(R.string.pref_list_key));
         listPreference2 = (ListPreference)
                 findPreference(getString(R.string.pref_cast_list_key));
-        //if use is guess remove perference listPreference1
+        //if use is guess remove preference listPreference1
         if(AppController.isGuess)
             listPreference1.setEnabled(false);
 
