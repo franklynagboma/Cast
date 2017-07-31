@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.androidtecknowlogy.tym.cast.R;
+import com.androidtecknowlogy.tym.cast.helper.io.CustomDataFormat;
 import com.androidtecknowlogy.tym.cast.helper.pojo.CastItems;
 import com.androidtecknowlogy.tym.cast.interfaces.Constant;
 import com.androidtecknowlogy.tym.cast.cast.presenter.ItemsPresenter;
@@ -29,6 +30,7 @@ import com.androidtecknowlogy.tym.cast.app.AppController;
 import com.androidtecknowlogy.tym.cast.helper.adpater.RecyclerItemAdapter;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -95,6 +97,7 @@ public class ItemsFragment extends Fragment implements Constant.PresenterCallsIt
         ButterKnife.bind(this,view);
         context = getActivity();
         pref = PreferenceManager.getDefaultSharedPreferences(context);
+
         isTab = context.getResources().getBoolean(R.bool.isTab);
         orientation = getResources().getConfiguration().smallestScreenWidthDp;
 
@@ -171,6 +174,7 @@ public class ItemsFragment extends Fragment implements Constant.PresenterCallsIt
         itemPositionToPresenter.positionItemFragment(null, "", 0,0, false);
         Log.i(LOG_TAG, "onPause detached listener");
     }
+
 
 
     private void init() {

@@ -1,5 +1,6 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">Cast</string>
+    <string name="cousant">Cousant profile</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"
 
@@ -106,5 +107,42 @@
     <string name="action_search">Search</string>
     <string name="action_new_event">Add event</string>
     <string name="not_sign_up">Not registered? Sign Up</string>
+
+
+    <!-- Preference -->
+    <string name="pref_personality_title">Personality</string>
+    <string name="pref_personality_key" translatable="false">pref_personality</string>
+
+    <string name="pref_list_title">Show date of birth</string>
+    <string name="pref_list_key" translatable="false">pref_list</string>
+    <string name="list_summary">@string/every_one</string>
+    <!--list value-->
+    <string name="every_one">Every one</string>
+    <string name="just_this_device">Just this device</string>
+    <string name="current_user">current user</string>
+    <string name="never">never</string>
+    <!--list entity and entry-->
+    <string-array name="pref_entity_entry">
+        <item>@string/every_one</item>
+        <item>@string/just_this_device</item>
+        <item>@string/current_user</item>
+        <item>@string/never</item>
+    </string-array>
+
+    <string name="pref_cast_list_title">Cast users update</string>
+    <string name="pref_cast_list_key" translatable="false">pref_cast_list</string>
+    <string name="cast_list_summary">@string/as_they_are_created</string>
+    <!--cast list value-->
+    <string name="as_they_are_created">As they are created</string>
+    <string name="once_a_day">Once a day</string>
+    <!--cast list entity and entry-->
+    <string-array name="pref_cast_entity_entry">
+        <item>@string/as_they_are_created</item>
+        <item>@string/once_a_day</item>
+    </string-array>
+
+    <string name="pref_reset_title">Reset</string>
+    <string name="pref_reset_key" translatable="false">pre_reset</string>
+    <string name="reset_summary">Clear all settings made</string>
 
 </resources>

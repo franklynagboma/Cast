@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.androidtecknowlogy.tym.cast.R;
@@ -39,6 +40,13 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
     private String getShowDob, getDevice;
     private String getPhoto = "" , getEmail = "", getGender = "",
             getMonth_year = "", getName = "", getMobile = "", getTitle = "";
+
+    @BindView(R.id.cousant_profile)
+    LinearLayout cousantProfile;
+    @BindView(R.id.cast_profile)
+    LinearLayout castProfile;
+    @BindView(R.id.about_cousant)
+    TextView aboutCousant;
 
     @BindView(R.id.image_holder)
     FrameLayout imageHolder;
@@ -120,7 +128,11 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
                                               String email, String summary) {
 
         user = true;
-        showDetails(0, image, email, gender, "", name, mobile, title, dob, summary);
+        //is use is guess show his profile else show Cousant profile
+        if(!AppController.isGuess)
+            showDetails(0, image, email, gender, "", name, mobile, title, dob, summary);
+        else
+            showCousantProfile(summary);
     }
 
     @Override
@@ -161,6 +173,11 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
             public void run() {
                 context = getActivity();
                 if(!photo.isEmpty()) {
+
+                    //set visibility back if ever it was changed
+                    cousantProfile.setVisibility(View.INVISIBLE);
+                    castProfile.setVisibility(View.VISIBLE);
+
                     //for Tab to not through null because this Fragment starts as the Activity does
                     //base on MVC pathern.
                     imageHolder.setBackgroundResource(itemPosition != 0
@@ -191,8 +208,8 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
                                 ? getResources().getString(R.string.dob,dob) : "");
                     }
 
-                    castMobile.setText(mobile);
-                    castEmail.setText(email);
+                    castMobile.setText(!AppController.isGuess ?mobile :"Cousant mobile");
+                    castEmail.setText(!AppController.isGuess ?email :"Cousant email");
                     castSummary.setText(summary);
                     user = false;
                 }
@@ -200,6 +217,19 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
         },100);
     }
 
+    private void showCousantProfile(final String summary) {
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //hind cast profile layout and show Cousant profile layout
+                castProfile.setVisibility(View.INVISIBLE);
+                aboutCousant.setText(summary != null && !summary.isEmpty() ?summary :"Cousant");
+                cousantProfile.setVisibility(View.VISIBLE);
+            }
+        }, 100);
+
+    }
     @OnClick
     public void onPhoneCallClicked(){}
 

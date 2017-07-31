@@ -23,7 +23,9 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.androidtecknowlogy.tym.cast.R;
+import com.androidtecknowlogy.tym.cast.app.AppController;
 import com.androidtecknowlogy.tym.cast.complete_signup.fragment.CompleteSignUpFragment;
+import com.androidtecknowlogy.tym.cast.helper.io.CustomDataFormat;
 import com.androidtecknowlogy.tym.cast.helper.view.CustomBottomNavigationView;
 import com.androidtecknowlogy.tym.cast.login.LoginActivity;
 import com.androidtecknowlogy.tym.cast.cast.presenter.EventsPresenter;
@@ -34,6 +36,8 @@ import com.androidtecknowlogy.tym.cast.cast.fragment_view.ItemsFragment;
 import com.androidtecknowlogy.tym.cast.cast.settings.HostFragment;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.getbase.floatingactionbutton.FloatingActionButton;
+
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -63,8 +67,8 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
     private final String DETAILS_FRAG = "detail_fragment";
     private static final String SETTINGS_FRAG = "settings_frag";
     private static final String EVENT_FRAG = "event_frag";
-    private boolean menuCheck;
     public final static String COMPLETE = "complete";
+    private boolean menuCheck;
     private String FRAG = "";
     private String pauseFrag;
     private String getInstanceState;
@@ -552,10 +556,14 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem menuItem = menu.findItem(R.id.action_edit);
 
-        if(menuCheck)
-            menuItem.setVisible(true);
-        else
-            menuItem.setVisible(false);
+        //check if user is a guess
+        if(!AppController.isGuess) {
+            if(menuCheck)
+                menuItem.setVisible(true);
+            else
+                menuItem.setVisible(false);
+        }
+
         return true;
     }
 
@@ -595,7 +603,7 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
         openGoogleSignInActivity("logout");
     }
     private void openGoogleSignInActivity(String msg) {
-        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
         //save login to false
         prefEdit = pref.edit();
         prefEdit.putBoolean("login", false);

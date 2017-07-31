@@ -7,8 +7,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.ListPreference;
 import android.preference.Preference;
+import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
@@ -57,11 +59,17 @@ public class SettingsFragment extends PreferenceFragment
                 findPreference(getString(R.string.pref_list_key));
         listPreference2 = (ListPreference)
                 findPreference(getString(R.string.pref_cast_list_key));
+        //if use is guess remove perference listPreference1
+        if(AppController.isGuess)
+            listPreference1.setEnabled(false);
+
         //set up summary from previous values
-        if (AppController.settingMap.containsKey(castEmail)) {
+        if (AppController.settingMap.containsKey(castEmail))
             listPreference1.setSummary(AppController.settingMap.get(castEmail).getShowDob());
-            listPreference2.setSummary(AppController.settingMap.get(castEmail).getCastUpdate());
-        }
+        //user just lunch the application for the first time.
+        else
+            listPreference1.setValue(null);
+
         //get values from preference
         getListPreferenceValues();
 
@@ -110,7 +118,7 @@ public class SettingsFragment extends PreferenceFragment
 
     @Override
     public boolean onPreferenceChange(final Preference preference, Object newValue) {
-        final String value = newValue.toString();
+        String value = newValue.toString();
         Log.i(LOG_TAG, "Object value: " + value);
 
         if(preference instanceof ListPreference) {
@@ -127,12 +135,10 @@ public class SettingsFragment extends PreferenceFragment
                     if(!preference.getSummary().toString().equals(previousValue1))
                         savePreference(listPreference.getTitle().toString(), value);
                 }
-                else if(listPreference == findPreference(getString(R.string.pref_cast_list_key))) {
+                /*else if(listPreference == findPreference(getString(R.string.pref_cast_list_key))) {
                     if(!preference.getSummary().toString().equals(previousValue2))
                         savePreference(listPreference.getTitle().toString(), value);
-                }
-
-                getListPreferenceValues();
+                }*/
             }
         }
 
@@ -169,6 +175,7 @@ public class SettingsFragment extends PreferenceFragment
                                         .setValue(getValue2);
                                 dialog.dismiss();
                                 startLoading("");
+                                savePreference(listPreference1.getTitle().toString(), getValue1);
                                 stopLoading();
                             }
                             else

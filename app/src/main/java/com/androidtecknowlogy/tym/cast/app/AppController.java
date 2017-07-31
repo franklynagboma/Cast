@@ -26,6 +26,7 @@ public class AppController extends Application {
     private static AppController instance;
     public static final String currentDevice = Build.MANUFACTURER.toUpperCase() +" "+ Build.MODEL;
     public static FirebaseDatabase firebaseDatabase;
+    public static boolean isGuess;
     public final String CASTS = "Casts";
     public final String EVENTS = "Events";
     public final String ADMINS = "Admins";

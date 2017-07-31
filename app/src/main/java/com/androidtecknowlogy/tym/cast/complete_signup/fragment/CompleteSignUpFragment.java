@@ -392,6 +392,7 @@ public class CompleteSignUpFragment extends Fragment implements GoogleSignInActi
 
     /**
      * This method override GoogleSignInActivity interface getSignInCredn
+     * to view arg from Online storage.
      * @param uId
      * @param photo
      * @param name
@@ -404,6 +405,7 @@ public class CompleteSignUpFragment extends Fragment implements GoogleSignInActi
         userEventPasswordConfirm.setText("");
         inputPassword.setVisibility(View.VISIBLE);
         inputConfirm.setVisibility(View.VISIBLE);
+
         performViewPresentation(uId, photo, name, email);
     }
 
@@ -435,6 +437,7 @@ public class CompleteSignUpFragment extends Fragment implements GoogleSignInActi
         //set emails
         userEmail.setText(email);
     }
+
     @Override
     public void startActivity(String message) {
         String[] getMessage = message.split("/");

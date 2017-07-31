@@ -62,25 +62,26 @@ public class ItemsModel {
                         for(DataSnapshot dataSnap : dataSnapshot.getChildren()) {
                             Object obj = dataSnap.getValue();
 
-                            Log.i(LOG_TAG, "obj 1 " + obj);
-
                             //get the cast items
                             if(obj instanceof Map) {
                                 Log.e(LOG_TAG, "obj " + obj);
-                                //store castItems in list
-                                CastItems castItems = dataSnap.getValue(CastItems.class);
-                                //store settings in list
-                                Settings settings = dataSnap.getValue(Settings.class);
 
                                 //check which map class was seen.
                                 String getKeySnap = dataSnap.getKey();
                                 //for settings map class.
                                 if (getKeySnap.contains("@gmail")) {
+                                    //store settings in list
+                                    Settings settings = dataSnap.getValue(Settings.class);
                                     AppController.settingMap.put(getKeySnap, settings);
                                 }
                                 else {
                                     //for castItems map class.
+                                    //store castItems in list
+                                    CastItems castItems = dataSnap.getValue(CastItems.class);
                                     //check the current user so as not to display
+                                    /*//check if user is guess
+                                    if(AppController.isGuess)
+                                        AppController.detailsCastItems.add(castItems);*/
                                     // the user content on the view.
                                     if(!userName.equalsIgnoreCase(castItems.getCastName()))
                                         AppController.detailsCastItems.add(castItems);

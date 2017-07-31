@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatButton;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -51,6 +52,7 @@ public class GoogleSignInActivity extends AppCompatActivity{
     private FirebaseAuth.AuthStateListener authStateListener;
     private final int RC_SIGN_IN = 1001;
     @BindView(R.id.sign_in) SignInButton signInButton;
+    @BindView(R.id.guess_button) AppCompatButton guessButton;
     @BindView(R.id.sign_in_layout) FrameLayout signInLayout;
     @BindView(R.id.sign_up_layout) FrameLayout signUpLayout;
     private CompleteSignUpFragment completeSignUpFragment;
@@ -196,10 +198,11 @@ public class GoogleSignInActivity extends AppCompatActivity{
         signIn();
     }
 
-    /*@OnClick(R.id.sign_out)
-    public void onSignOutClicked() {
-        signOut();
-    }*/
+    @OnClick(R.id.guess_button)
+    public void onGuessClicked () {
+        AppController.isGuess = true;
+        startNextActivity("castActivity");
+    }
 
     private void init() {
         loading = new ProgressDialog(this);
