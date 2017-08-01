@@ -30,7 +30,6 @@
                 android:id="@+id/about_cousant"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/large_text"
                 android:textSize="13sp"/>
         </ScrollView>
     </LinearLayout>
@@ -166,6 +165,7 @@
                         android:layout_gravity="center"
                         android:scaleType="centerCrop"
                         android:padding="4dp"
+                        android:background="?attr/selectableItemBackground"
                         android:src="@drawable/ic_phone_in_talk_24dp"/>
                     <View
                         android:layout_width="1dp"
@@ -276,19 +276,17 @@
                 android:id="@+id/summary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/summary"
                 android:padding="5dp"
                 android:layout_centerHorizontal="true"/>
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/scroll_background"
                 android:layout_below="@+id/summary">
                 <TextView
                     android:id="@+id/cast_summary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="5dp" />
+                    android:padding="10dp" />
             </ScrollView>
         </RelativeLayout>
     </LinearLayout>

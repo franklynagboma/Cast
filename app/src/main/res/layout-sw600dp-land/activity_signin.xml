@@ -34,17 +34,30 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:layout_gravity="center">
-                        <com.google.android.gms.common.SignInButton
-                            android:id="@+id/sign_in"
+                        <RelativeLayout
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center">
+                            <com.google.android.gms.common.SignInButton
+                                android:id="@+id/sign_in"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                            <!--progressBar load-->
+                            <ProgressBar
+                                android:id="@+id/circular_progress_bar"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:indeterminate="false"
+                                android:layout_centerInParent="true"
+                                android:visibility="gone"/>
+                        </RelativeLayout>
                         <android.support.v7.widget.AppCompatButton
                             android:id="@+id/guess_button"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="20dp"
                             android:layout_gravity="center_horizontal"
-                            android:text="Guess"
+                            android:text="Guest"
                             android:textSize="13sp"
                             android:background="@drawable/button_background"/>
                     </LinearLayout>

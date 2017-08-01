@@ -1,9 +1,13 @@
 package com.androidtecknowlogy.tym.cast.app;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Build;
 
 import com.androidtecknowlogy.tym.cast.R;
+import com.androidtecknowlogy.tym.cast.helper.io.ConnectionReceiver;
 import com.androidtecknowlogy.tym.cast.helper.pojo.CastItems;
 import com.androidtecknowlogy.tym.cast.helper.pojo.Settings;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -26,7 +30,7 @@ public class AppController extends Application {
     private static AppController instance;
     public static final String currentDevice = Build.MANUFACTURER.toUpperCase() +" "+ Build.MODEL;
     public static FirebaseDatabase firebaseDatabase;
-    public static boolean isGuess;
+    public static boolean isGuest;
     public final String CASTS = "Casts";
     public final String EVENTS = "Events";
     public final String ADMINS = "Admins";
@@ -49,6 +53,8 @@ public class AppController extends Application {
     public void onCreate() {
         super.onCreate();
         instance = this;
+        //initialize connection receiver
+        new ConnectionReceiver().onReceive(getInstance(), new Intent());
         //initialize fire base database
         firebaseDatabase = FirebaseDatabase.getInstance();
         //initialize fire base database
@@ -80,6 +86,28 @@ public class AppController extends Application {
                 .requestEmail()
                 .build();
         return gso;
+    }
+
+    //set up fonts for text.
+    public static Typeface getDroidFace(Context context) {
+        return Typeface.createFromAsset(context.getAssets(),
+                "fonts/DroidSerif-Bold.ttf");
+    }
+    public static Typeface getProximaFace(Context context) {
+        return Typeface.createFromAsset(context.getAssets(),
+                "fonts/proxima-nova-regular.ttf");
+    }
+    public static Typeface getRalewayBoldFace(Context context) {
+        return Typeface.createFromAsset(context.getAssets(),
+                "fonts/Raleway-Bold.ttf");
+    }
+    public static Typeface getRalewayMediumFace(Context context) {
+        return Typeface.createFromAsset(context.getAssets(),
+                "fonts/Raleway-Medium.ttf");
+    }
+    public static Typeface getAndroidFace(Context context) {
+        return Typeface.createFromAsset(context.getAssets(),
+                "fonts/AndroidClock.ttf");
     }
 
 

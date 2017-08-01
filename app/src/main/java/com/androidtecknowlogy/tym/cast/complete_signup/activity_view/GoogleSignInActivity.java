@@ -5,17 +5,25 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androidtecknowlogy.tym.cast.R;
 import com.androidtecknowlogy.tym.cast.app.AppController;
+import com.androidtecknowlogy.tym.cast.helper.io.ConnectionReceiver;
 import com.androidtecknowlogy.tym.cast.login.LoginActivity;
 import com.androidtecknowlogy.tym.cast.complete_signup.fragment.CompleteSignUpFragment;
 import com.androidtecknowlogy.tym.cast.complete_signup.model.CompleteSignUpModel;
@@ -27,6 +35,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -50,8 +60,10 @@ public class GoogleSignInActivity extends AppCompatActivity{
     private GoogleApiClient googleApiClient;
     private FirebaseAuth authFirebase;
     private FirebaseAuth.AuthStateListener authStateListener;
+    private final String COUSANT = "COUSANT";
     private final int RC_SIGN_IN = 1001;
     @BindView(R.id.sign_in) SignInButton signInButton;
+    @BindView(R.id.circular_progress_bar) ProgressBar progressBar;
     @BindView(R.id.guess_button) AppCompatButton guessButton;
     @BindView(R.id.sign_in_layout) FrameLayout signInLayout;
     @BindView(R.id.sign_up_layout) FrameLayout signUpLayout;
@@ -105,6 +117,8 @@ public class GoogleSignInActivity extends AppCompatActivity{
 
         setContentView(R.layout.activity_signin);
         ButterKnife.bind(this);
+        guessButton.setTypeface(AppController.getDroidFace(this));
+        changeSignInText(signInButton);
 
 
         //client to access the google sign in api
@@ -140,7 +154,6 @@ public class GoogleSignInActivity extends AppCompatActivity{
                         String name = user.getDisplayName();
                         String email = user.getEmail();
                         //get user details to Complete signUp to get complete details from users.
-                        stopLoading();
                         signInLayout.setVisibility(View.GONE);
                         signUpLayout.setVisibility(View.VISIBLE);
                         googleDetails.getSignInCredn(uId, photo, name, email);
@@ -150,10 +163,10 @@ public class GoogleSignInActivity extends AppCompatActivity{
                                         email,null,null,null));*/
                     }
                     else {
-                        stopLoading();
                         signUpLayout.setVisibility(View.GONE);
                         signInLayout.setVisibility(View.VISIBLE);
                     }
+                    stopLoading();
                 }
             }
         };
@@ -173,6 +186,41 @@ public class GoogleSignInActivity extends AppCompatActivity{
         init();
     }
 
+    protected void changeSignInText(SignInButton signInButton) {
+
+        for(int count = 0; count < signInButton.getChildCount(); count ++) {
+            View signInView = signInButton.getChildAt(count);
+
+            if(signInView instanceof TextView) {
+                TextView text = (TextView) signInView;
+                text.setText(COUSANT);
+                text.setTextColor(getResources().getColor(android.R.color.black));
+                if(orientation < 600)
+                    text.setTextSize(13f);
+                if(orientation >= 600 && orientation <680)
+                    text.setTextSize(15f);
+                else if(orientation >= 680)
+                    text.setTextSize(17f);
+                text.setPadding(4,4,4,4);
+                text.setTypeface(AppController.getDroidFace(this));
+                return;
+            }
+        }
+    }
+
+    private void setProgressBar(boolean mes){
+        //set progressBar and indeterminate.
+        if(!mes){
+            progressBar.setVisibility(View.GONE);
+            progressBar.setIndeterminate(false);
+            signInButton.setVisibility(View.VISIBLE);
+        }
+        else {
+            signInButton.setVisibility(View.GONE);
+            progressBar.setIndeterminate(true);
+            progressBar.setVisibility(View.VISIBLE);
+        }
+    }
     public void startLoading(String title, String message){
         if(null == loading){
             loading = new ProgressDialog(this);
@@ -183,7 +231,7 @@ public class GoogleSignInActivity extends AppCompatActivity{
         loading.show();
     }
     public void stopLoading(){
-        if(null != loading && loading.isShowing())
+        if(loading != null && loading.isShowing())
             loading.dismiss();
     }
 
@@ -195,18 +243,26 @@ public class GoogleSignInActivity extends AppCompatActivity{
     @OnClick(R.id.sign_in)
     public void onSignInClicked() {
         Log.i(LOG_TAG, "sign in clicked");
-        signIn();
+        if(!ConnectionReceiver.isConnected()) {
+            setProgressBar(false);
+            snackMsg("Check internet connection","wifi","long");
+        }
+        else {
+            setProgressBar(true);
+            signIn();
+        }
     }
 
     @OnClick(R.id.guess_button)
     public void onGuessClicked () {
-        AppController.isGuess = true;
-        startNextActivity("castActivity");
+        AppController.isGuest = true;
+        if(!ConnectionReceiver.isConnected())
+            snackMsg("Check internet connection","wifi","long");
+        else
+            startNextActivity("castActivity");
     }
 
     private void init() {
-        loading = new ProgressDialog(this);
-        loading.setCancelable(false);
         completeSignUpFragment = (CompleteSignUpFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.complete_sign_up_fragment);
 
@@ -242,9 +298,24 @@ public class GoogleSignInActivity extends AppCompatActivity{
             authFirebase.removeAuthStateListener(authStateListener);
     }
 
+    private void restoreSignInProcess() {
+        //call fire base authentication sign out
+        authFirebase.signOut();
+        Auth.GoogleSignInApi.signOut(googleApiClient)
+                .setResultCallback(new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(@NonNull Status status) {
+                        //check is the status is not successful,the recall method.
+                        if(!status.isSuccess())
+                            restoreSignInProcess();
+                    }
+                });
+    }
     private void fireBaseAuthWithGoogle(GoogleSignInAccount account) {
         Log.e(LOG_TAG, "Account id: " + account.getId());
-        //startLoading("Cousant signIn", "loading Gmail data...");
+
+        //sign in for testing.
+        startLoading("Cousant signIn", "loading Gmail data...");
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
         authFirebase.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -255,11 +326,32 @@ public class GoogleSignInActivity extends AppCompatActivity{
                         if(!task.isSuccessful()) {
                             Log.e(LOG_TAG, task.getException().toString());
                             Log.e(LOG_TAG, "Authentication fails");
-                            Toast.makeText(getApplicationContext(), "Authentication fails",
-                                    Toast.LENGTH_SHORT).show();
+                            toastMsg("Authentication fails");
                         }
                     }
                 });
+        /*//check if email account is cousant's mail.
+        if(!account.getEmail().contains("@cousant.com")) {
+            restoreSignInProcess();
+            snackMsg("Use Cousant mail.","info", "long");
+        }
+        else {
+            startLoading("Cousant signIn", "loading Gmail data...");
+            AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+            authFirebase.signInWithCredential(credential)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            //if sign in fails, display a message to tell so else,
+                            //notify the authStateListener to get credentials.
+                            if(!task.isSuccessful()) {
+                                Log.e(LOG_TAG, task.getException().toString());
+                                Log.e(LOG_TAG, "Authentication fails");
+                                toastMsg("Authentication fails");
+                            }
+                        }
+                    });
+        }*/
     }
 
     @Override
@@ -272,14 +364,66 @@ public class GoogleSignInActivity extends AppCompatActivity{
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
 
             if(result.isSuccess()) {
+                setProgressBar(false);
                 //get the account details and send to firebase
                 GoogleSignInAccount account = result.getSignInAccount();
                 fireBaseAuthWithGoogle(account);
             }
             else {
-                //perform UI expected.
+                setProgressBar(false);
+                snackMsg("Check internet connection","wifi","long");
             }
         }
+        else {
+            setProgressBar(false);
+            toastMsg("Sign in with Cousant mail.");
+        }
+    }
+
+    private void toastMsg (String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
+
+    private void snackMsg (String msg, String iconType,String length) {
+        Snackbar snackbar = Snackbar.make(signInButton.getRootView(), "",
+                length.equals("long")?Snackbar.LENGTH_LONG :Snackbar.LENGTH_SHORT);
+        //get snack bar view and customize with snackbar_layout.
+        Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
+        //hide snack bar fix text view layout
+        ((TextView) layout.findViewById(android.support.design.R.id.snackbar_text))
+                .setVisibility(View.INVISIBLE);
+        //attack view
+        View snackView = getLayoutInflater().inflate(R.layout.snackbar_layout, null, false);
+        TextView textView = (TextView) snackView.findViewById(R.id.snack_text);
+        textView.setTypeface(AppController.getProximaFace(this));
+        ImageView imageView = (ImageView) snackView.findViewById(R.id.snack_image);
+        TextView settingBtn = (TextView) snackView.findViewById(R.id.snack_btn);
+        settingBtn.setTypeface(AppController.getDroidFace(this));
+        settingBtn.setVisibility(View.INVISIBLE);
+
+        if(iconType.equalsIgnoreCase("info"))
+            imageView.setImageResource(R.drawable.info);
+        if(iconType.equalsIgnoreCase("wifi")) {
+            imageView.setImageResource(R.drawable.wifi);
+            //text settings onClick.
+            settingBtn.setVisibility(View.VISIBLE);
+            settingBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(Settings.ACTION_SETTINGS);
+                    if(intent.resolveActivity(getPackageManager()) != null)
+                        startActivity(intent);
+                }
+            });
+        }
+        textView.setText(msg);
+
+        //set on click for network setting.
+        //show custom snack bar.
+        layout.addView(snackView);
+        layout.setBackgroundResource(R.color.colorPrimary);
+        snackbar.show();
+
     }
 
     @Override

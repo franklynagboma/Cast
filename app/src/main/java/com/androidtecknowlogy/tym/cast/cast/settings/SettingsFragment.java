@@ -60,7 +60,7 @@ public class SettingsFragment extends PreferenceFragment
         listPreference2 = (ListPreference)
                 findPreference(getString(R.string.pref_cast_list_key));
         //if use is guess remove preference listPreference1
-        if(AppController.isGuess)
+        if(AppController.isGuest)
             listPreference1.setEnabled(false);
 
         //set up summary from previous values

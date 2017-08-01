@@ -249,9 +249,10 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
         castUserToDetailFragment.CastSendUsersToDetailFragment(pref.getString("image", ""),
                 pref.getString("name", ""), pref.getString("title", ""),
                 pref.getString("dob", ""),pref.getString("gender", ""),
-                !AppController.isGuess ?pref.getString("mobile", "") :toCousantNumber,
-                !AppController.isGuess ?pref.getString("email", "") :toCousantEmail,
-                pref.getString("summary","") );
+                !AppController.isGuest ?pref.getString("mobile", "") :toCousantNumber,
+                !AppController.isGuest ?pref.getString("email", "") :toCousantEmail,
+                !AppController.isGuest ?pref.getString("summary","")
+                        : getString(R.string.large_text) );
 
 
     }
@@ -560,7 +561,7 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
         MenuItem menuItem = menu.findItem(R.id.action_edit);
 
         //check if user is a guess
-        if(!AppController.isGuess) {
+        if(!AppController.isGuest) {
             if(menuCheck)
                 menuItem.setVisible(true);
             else

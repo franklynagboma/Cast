@@ -134,7 +134,7 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
 
         user = true;
         //is use is guess show his profile else show Cousant profile
-        if(!AppController.isGuess)
+        if(!AppController.isGuest)
             showDetails(0, image, email, gender, "", name, mobile, title, dob, summary);
         else
             showCousantProfile(summary);
@@ -219,12 +219,15 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
                     castMobile.setText(editUserMobile(mobile));
                     castEmail.setText(email);
                     castSummary.setText(summary);
+
+                    //perform text editing and design
+                    performTextEditDesign(gender);
                 }
             }
         },100);
     }
 
-    @OnClick
+    @OnClick(R.id.phone_call)
     public void onPhoneCallClicked(){
         if(!user) {
             Intent intent = new Intent(Intent.ACTION_CALL);
@@ -315,5 +318,11 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
 
     private void sendToast (String msg) {
         Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+    }
+
+    private void performTextEditDesign (String getGender) {
+        String summaryIntro = "Why is " + (getGender.equalsIgnoreCase("male") ?"he":"she")
+                +" considered to be the best?";
+        summaryText.setText(summaryIntro);
     }
 }

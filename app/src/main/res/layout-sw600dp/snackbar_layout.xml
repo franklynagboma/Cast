@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="2dp">
+
+    <ImageView
+        android:id="@+id/snack_image"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:padding="4dp"
+        android:scaleType="centerCrop"
+        android:layout_centerHorizontal="true"/>
+    <TextView
+        android:id="@+id/snack_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:textColor="@android:color/white"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_toRightOf="@+id/snack_image"
+        android:layout_toEndOf="@+id/snack_image"/>
+    <TextView
+        android:id="@+id/snack_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_centerVertical="true"
+        android:text="Settings"
+        android:alpha="0.9"
+        android:textSize="18sp"
+        android:textColor="@color/colorAccent"
+        android:layout_toRightOf="@id/snack_text"
+        android:layout_toEndOf="@+id/snack_text"/>
+</RelativeLayout>
