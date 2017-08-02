@@ -119,7 +119,7 @@ public class ItemsFragment extends Fragment implements Constant.PresenterCallsIt
         //this will give null so to avoid, setHasOptionsMenu(true) in onViewCreated.
         MenuItem menuItem = menu.findItem(R.id.action_search);
         SearchView searchView  = (SearchView) MenuItemCompat.getActionView(menuItem);
-        searchView.setQueryHint("By name...");
+        searchView.setQueryHint("Name,Title...");
         searchView.setOnQueryTextListener(this);
     }
 

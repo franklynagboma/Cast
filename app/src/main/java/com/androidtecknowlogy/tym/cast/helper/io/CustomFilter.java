@@ -50,7 +50,8 @@ public class CustomFilter  extends Filter {
             //loop through list for query
             for (CastItems cast : castItemsList) {
                 //add filtered to filtered list.
-                if(cast.getCastName().toLowerCase().contains(constraint))
+                if(cast.getCastName().toLowerCase().contains(constraint)
+                        || cast.getCastTitle().toLowerCase().contains(constraint))
                     filteredCastItemList.add(cast);
             }
 
