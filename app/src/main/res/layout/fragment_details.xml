@@ -14,12 +14,14 @@
         android:padding="16dp"
         android:visibility="invisible">
         <TextView
-            android:id="@+id/ccousant"
+            android:id="@+id/cousant"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/cousant"
             android:layout_gravity="center_horizontal"
-            android:textSize="15sp"/>
+            android:textStyle="bold"
+            android:textColor="@color/black_tin"
+            android:textSize="@dimen/cousant"/>
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -30,7 +32,9 @@
                 android:id="@+id/about_cousant"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="13sp"/>
+                android:textStyle="bold"
+                android:textColor="@color/black_tin"
+                android:textSize="@dimen/about_cousant"/>
         </ScrollView>
     </LinearLayout>
 
@@ -48,12 +52,12 @@
             android:layout_marginBottom="20dp">
             <FrameLayout
                 android:id="@+id/image_holder"
-                android:layout_width="40dp"
-                android:layout_height="40dp">
+                android:layout_width="@dimen/profile_image_size"
+                android:layout_height="@dimen/profile_image_size">
                 <ImageView
                     android:id="@+id/cast_image"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="@dimen/profile_image_size"
+                    android:layout_height="@dimen/profile_image_size"
                     android:layout_gravity="center"
                     android:scaleType="centerCrop"
                     android:src="@mipmap/ic_cast_person"
@@ -69,33 +73,35 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="2dp"
+                    android:textSize="@dimen/cast_name"
                     android:textStyle="bold"
-                    android:alpha="0.9"/>
+                    android:textColor="@color/black_tin"/>
                 <TextView
                     android:id="@+id/cast_title"
                     android:layout_below="@+id/cast_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="2dp"
+                    android:textSize="@dimen/cast_gender_title"
                     android:textStyle="bold"
-                    android:alpha="0.6"/>
+                    android:textColor="@color/black_tin"/>
                 <TextView
                     android:id="@+id/cast_gender"
                     android:layout_below="@+id/cast_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="2dp"
+                    android:textSize="@dimen/cast_gender_title"
                     android:textStyle="bold"
-                    android:alpha="0.6"/>
+                    android:textColor="@color/black_tin"/>
                 <TextView
                     android:id="@+id/cast_dob"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/cast_gender"
+                    android:textSize="@dimen/cast_join"
                     android:textStyle="bold"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="10sp"
-                    android:alpha="0.6"/>
+                    android:textColor="@color/colorPrimary" />
             </RelativeLayout>
         </LinearLayout>
 
@@ -124,16 +130,17 @@
                     android:layout_alignParentStart="true"
                     android:layout_alignParentLeft="true"
                     android:text="@string/mobile"
+                    android:textSize="@dimen/cast_name"
                     android:textAllCaps="true"
                     android:textStyle="bold"
-                    android:alpha="0.9"/>
+                    android:textColor="@color/black_tin"/>
                 <View
                     android:id="@+id/view_1"
                     android:layout_below="@+id/mobile_details"
                     android:layout_marginTop="5dp"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@color/black_tin"/>
+                    android:background="@color/black_gone"/>
 
                 <LinearLayout
                     android:layout_below="@+id/view_1"
@@ -148,20 +155,22 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:textSize="@dimen/cast_gender_title"
                         android:textStyle="bold"
-                        android:alpha="0.6"/>
+                        android:textColor="@color/black_tin"/>
                     <View
                         android:layout_width="1dp"
                         android:layout_height="match_parent"
-                        android:background="@color/black_tin"
+                        android:background="@color/black_gone"
                         android:layout_marginLeft="3dp"
                         android:layout_marginStart="3dp"
                         android:layout_marginRight="3dp"
                         android:layout_marginEnd="3dp"/>
                     <ImageView
                         android:id="@+id/phone_call"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="@dimen/profile_image_size"
+                        android:layout_height="@dimen/profile_image_size"
                         android:layout_gravity="center"
                         android:scaleType="centerCrop"
                         android:padding="4dp"
@@ -170,15 +179,15 @@
                     <View
                         android:layout_width="1dp"
                         android:layout_height="match_parent"
-                        android:background="@color/black_tin"
+                        android:background="@color/black_gone"
                         android:layout_marginLeft="3dp"
                         android:layout_marginStart="3dp"
                         android:layout_marginRight="3dp"
                         android:layout_marginEnd="3dp"/>
                     <ImageView
                         android:id="@+id/sms"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="@dimen/profile_image_size"
+                        android:layout_height="@dimen/profile_image_size"
                         android:layout_gravity="center"
                         android:scaleType="centerCrop"
                         android:padding="4dp"
@@ -208,22 +217,23 @@
                 android:layout_height="match_parent"
                 android:padding="5dp">
                 <TextView
-                    android:id="@+id/email"
+                    android:id="@+id/email_detail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentLeft="true"
                     android:text="@string/email"
                     android:textAllCaps="true"
+                    android:textSize="@dimen/cast_name"
                     android:textStyle="bold"
-                    android:alpha="0.9"/>
+                    android:textColor="@color/black_tin"/>
                 <View
                     android:id="@+id/view_2"
-                    android:layout_below="@+id/email"
+                    android:layout_below="@+id/email_detail"
                     android:layout_marginTop="5dp"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@color/black_tin"/>
+                    android:background="@color/black_gone"/>
 
                 <LinearLayout
                     android:layout_below="@+id/view_2"
@@ -238,20 +248,22 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:textSize="@dimen/cast_gender_title"
                         android:textStyle="bold"
-                        android:alpha="0.6"/>
+                        android:textColor="@color/black_tin"/>
                     <View
                         android:layout_width="1dp"
                         android:layout_height="match_parent"
-                        android:background="@color/black_tin"
+                        android:background="@color/black_gone"
                         android:layout_marginLeft="3dp"
                         android:layout_marginStart="3dp"
                         android:layout_marginRight="3dp"
                         android:layout_marginEnd="3dp"/>
                     <ImageView
                         android:id="@+id/mail_message"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="@dimen/profile_image_size"
+                        android:layout_height="@dimen/profile_image_size"
                         android:layout_gravity="center"
                         android:scaleType="centerCrop"
                         android:padding="4dp"
@@ -277,7 +289,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="5dp"
-                android:layout_centerHorizontal="true"/>
+                android:layout_centerHorizontal="true"
+                android:textSize="@dimen/cast_name"
+                android:textStyle="bold"
+                android:textColor="@color/black_tin"/>
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -286,7 +301,10 @@
                     android:id="@+id/cast_summary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="10dp" />
+                    android:padding="10dp"
+                    android:textSize="@dimen/cast_gender_title"
+                    android:textStyle="bold"
+                    android:textColor="@color/black_tin"/>
             </ScrollView>
         </RelativeLayout>
     </LinearLayout>

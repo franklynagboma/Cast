@@ -1,0 +1,13 @@
+<resources>
+    <dimen name="app_bar_height">185dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
+
+    <!--Personal dimen-->
+    <dimen name="profile_image_size">45dp</dimen>
+    <dimen name="cast_name">14sp</dimen>
+    <dimen name="cast_gender_title">12sp</dimen>
+    <dimen name="cast_join">10sp</dimen>
+    <dimen name="cousant">17sp</dimen>
+    <dimen name="about_cousant">14sp</dimen>
+</resources>

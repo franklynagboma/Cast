@@ -18,6 +18,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.androidtecknowlogy.tym.cast.R;
+import com.androidtecknowlogy.tym.cast.app.AppController;
 import com.androidtecknowlogy.tym.cast.cast.fragment_view.ItemsFragment;
 import com.androidtecknowlogy.tym.cast.helper.io.CustomFilter;
 import com.androidtecknowlogy.tym.cast.interfaces.Constant;
@@ -103,7 +104,7 @@ public class RecyclerItemAdapter extends RecyclerView.Adapter<RecyclerItemAdapte
         holder.castName.setText(castItems.getCastName());
         holder.castGender.setText(castItems.getCastGender());
         holder.castTitle.setText(castItems.getCastTitle());
-        holder.castDob.setText(castItems.getCastDob());
+        holder.castJoin.setText(castItems.getCastJoined());
 
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
@@ -118,6 +119,12 @@ public class RecyclerItemAdapter extends RecyclerView.Adapter<RecyclerItemAdapte
             }
         };
         holder.textHolder.setOnClickListener(listener);
+
+        //set font type for views
+        holder.castName.setTypeface(AppController.getDroidFace(context));
+        holder.castGender.setTypeface(AppController.getProximaFace(context));
+        holder.castTitle.setTypeface(AppController.getProximaFace(context));
+        holder.castJoin.setTypeface(AppController.getProximaFace(context));
 
         Animation animation = AnimationUtils.loadAnimation(context,
                 (position > lastPosition)
@@ -154,7 +161,7 @@ public class RecyclerItemAdapter extends RecyclerView.Adapter<RecyclerItemAdapte
         private RelativeLayout textHolder;
         private FrameLayout imageHolder;
         private ImageView castImage;
-        private TextView castName, castTitle, castGender, castDob;
+        private TextView castName, castTitle, castGender, castJoin;
 
         public LayoutHolder(View itemView) {
             super(itemView);
@@ -166,7 +173,7 @@ public class RecyclerItemAdapter extends RecyclerView.Adapter<RecyclerItemAdapte
             this.castName = (TextView) itemView.findViewById(R.id.cast_name);
             this.castTitle = (TextView) itemView.findViewById(R.id.cast_title);
             this.castGender = (TextView) itemView.findViewById(R.id.cast_gender);
-            this.castDob = (TextView) itemView.findViewById(R.id.cast_dob);
+            this.castJoin = (TextView) itemView.findViewById(R.id.cast_join);
         }
     }
 }

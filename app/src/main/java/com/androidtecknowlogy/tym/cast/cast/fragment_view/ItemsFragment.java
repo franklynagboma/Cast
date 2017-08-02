@@ -100,6 +100,7 @@ public class ItemsFragment extends Fragment implements Constant.PresenterCallsIt
 
         isTab = context.getResources().getBoolean(R.bool.isTab);
         orientation = getResources().getConfiguration().smallestScreenWidthDp;
+        Log.i(LOG_TAG, "size sw size: " + orientation);
 
         itemAdapter = new RecyclerItemAdapter(context, AppController.detailsCastItems, isTab,
                 itemPositionToPresenter, detailsFragmentScreen);
@@ -132,22 +133,6 @@ public class ItemsFragment extends Fragment implements Constant.PresenterCallsIt
     public boolean onQueryTextChange(String query) {
         itemAdapter.getFilter().filter(query);
         return false;
-        /*query = query.toLowerCase();
-        Log.i(LOG_TAG, "Previous is empty: " + AppController.detailsCastItems.isEmpty()
-                + " Size: " + AppController.detailsCastItems.size());
-        List<CastItems> castItems = new ArrayList<>();
-        for(CastItems cast : AppController.detailsCastItems) {
-
-            String getName = cast.getCastName().toLowerCase();
-            //get the search item on a list
-            if(getName.contains(query))
-                castItems.add(cast);
-        }
-        Log.i(LOG_TAG, "castItems is empty = " + castItems.isEmpty());
-        //itemAdapter.setFilter(!castItems.isEmpty() ? castItems : AppController.detailsCastItems);
-        itemAdapter.setFilter(castItems);
-        return true;*/
-
     }
 
 

@@ -29,6 +29,7 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.androidtecknowlogy.tym.cast.R;
+import com.androidtecknowlogy.tym.cast.app.AppController;
 import com.androidtecknowlogy.tym.cast.cast.activity_view.CastActivity;
 import com.androidtecknowlogy.tym.cast.complete_signup.activity_view.GoogleSignInActivity;
 import com.androidtecknowlogy.tym.cast.complete_signup.model.CompleteSignUpModel;
@@ -252,6 +253,17 @@ public class CompleteSignUpFragment extends Fragment implements GoogleSignInActi
         completeSignUpPresenter.setPresenterSendSignUpToModel(model, model,this);
 
         completeText.setPaintFlags(completeText.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+
+        //set text type face
+        completeText.setTypeface(AppController.getDroidFace(context));
+        userSunName.setTypeface(AppController.getProximaFace(context));
+        userOtherNames.setTypeface(AppController.getProximaFace(context));
+        userMobile.setTypeface(AppController.getProximaFace(context));
+        userTitle.setTypeface(AppController.getProximaFace(context));
+        userEventPassword.setTypeface(AppController.getProximaFace(context));
+        userEventPasswordConfirm.setTypeface(AppController.getProximaFace(context));
+        userDob.setTypeface(AppController.getProximaFace(context));
+        userSummary.setTypeface(AppController.getProximaFace(context));
 
         rg = (RadioGroup) view.findViewById(R.id.rg);
         rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {

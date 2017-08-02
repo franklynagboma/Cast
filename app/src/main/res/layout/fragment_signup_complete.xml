@@ -13,8 +13,8 @@
         android:layout_marginBottom="10dp">
         <ImageView
             android:id="@+id/cast_image"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="@dimen/profile_image_size"
+            android:layout_height="@dimen/profile_image_size"
             android:scaleType="centerCrop"
             android:src="@mipmap/ic_cast_person"
             android:padding="4dp" />
@@ -24,8 +24,9 @@
             android:layout_height="wrap_content"
             android:text="@string/complete_sign_up"
             android:textColor="@color/colorPrimary"
-            android:textSize="18sp"
+            android:textSize="@dimen/cousant"
             android:layout_centerHorizontal="true"
+            android:textStyle="bold"
             android:padding="5dp"/>
     </RelativeLayout>
     <ScrollView
@@ -56,7 +57,9 @@
                         android:id="@+id/users_sun_name"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:textSize="13sp"
+                        android:textSize="@dimen/cast_gender_title"
+                        android:textStyle="bold"
+                        android:textColor="@color/black_tin"
                         android:inputType="text"
                         android:nextFocusDown="@+id/users_others_name"
                         android:digits="0123456789*.-_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ "/>
@@ -74,7 +77,9 @@
                         android:id="@+id/users_others_name"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:textSize="13sp"
+                        android:textSize="@dimen/cast_gender_title"
+                        android:textStyle="bold"
+                        android:textColor="@color/black_tin"
                         android:inputType="text"
                         android:nextFocusDown="@+id/users_mobile"
                         android:digits="0123456789*.-_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ "/>
@@ -92,20 +97,12 @@
                     android:id="@+id/users_email"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:textSize="13sp"
+                    android:textSize="@dimen/cast_gender_title"
+                    android:textStyle="bold"
+                    android:textColor="@color/black_tin"
                     android:inputType="textWebEmailAddress"/>
             </android.support.design.widget.TextInputLayout>
 
-            <!-- Take this to detail <Button
-                android:id="@+id/number_code"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="0.5"
-                android:text="+234"
-                android:textColor="@android:color/black"
-                android:alpha="0.8"
-                android:enabled="false"
-                android:background="@color/number_code"/>-->
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/input_mobile"
                 android:layout_width="match_parent"
@@ -117,7 +114,9 @@
                     android:id="@+id/users_mobile"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:textSize="13sp"
+                    android:textSize="@dimen/cast_gender_title"
+                    android:textStyle="bold"
+                    android:textColor="@color/black_tin"
                     android:inputType="phone"
                     android:nextFocusDown="@+id/users_title"
                     android:digits="0123456789"/>
@@ -134,7 +133,9 @@
                     android:id="@+id/users_title"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:textSize="13sp"
+                    android:textSize="@dimen/cast_gender_title"
+                    android:textStyle="bold"
+                    android:textColor="@color/black_tin"
                     android:inputType="text"
                     android:nextFocusDown="@+id/users_event_password"/>
             </android.support.design.widget.TextInputLayout>
@@ -152,7 +153,9 @@
                     android:id="@+id/users_event_password"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:textSize="13sp"
+                    android:textSize="@dimen/cast_gender_title"
+                    android:textStyle="bold"
+                    android:textColor="@color/black_tin"
                     android:inputType="textPassword"
                     android:nextFocusDown="@+id/users_event_password_confirm"/>
             </android.support.design.widget.TextInputLayout>
@@ -169,7 +172,9 @@
                     android:id="@+id/users_event_password_confirm"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:textSize="13sp"
+                    android:textSize="@dimen/cast_gender_title"
+                    android:textStyle="bold"
+                    android:textColor="@color/black_tin"
                     android:inputType="textPassword" />
             </android.support.design.widget.TextInputLayout>
 
@@ -184,21 +189,24 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:text="DOB"
-                    android:textSize="13sp"
+                    android:textSize="@dimen/cast_gender_title"
+                    android:textStyle="bold"
                     android:textColor="@color/colorPrimary"/>
                 <ImageView
                     android:id="@+id/img_calendar"
                     android:layout_marginLeft="15dp"
                     android:layout_marginStart="15dp"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="@dimen/profile_image_size"
+                    android:layout_height="@dimen/profile_image_size"
                     android:padding="4dp"
                     android:src="@drawable/ic_perm_contact_calendar_24dp"/>
                 <EditText
                     android:id="@+id/cast_dob"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="13sp"
+                    android:textSize="@dimen/cast_gender_title"
+                    android:textStyle="bold"
+                    android:textColor="@color/black_tin"
                     android:inputType="date"
                     android:visibility="invisible"
                     android:gravity="center_horizontal"
@@ -216,6 +224,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Male"
+                    android:textSize="@dimen/cast_gender_title"
+                    android:textStyle="bold"
                     android:textColor="@color/colorPrimary"
                     android:layout_marginRight="5dp"
                     android:layout_marginEnd="5dp"
@@ -226,6 +236,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Female"
+                    android:textSize="@dimen/cast_gender_title"
+                    android:textStyle="bold"
                     android:textColor="@color/colorPrimary"
                     android:layout_marginLeft="5dp"
                     android:layout_marginStart="5dp"
@@ -244,7 +256,9 @@
                     android:id="@+id/cast_summary"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:textSize="13sp"
+                    android:textSize="@dimen/cast_gender_title"
+                    android:textStyle="bold"
+                    android:textColor="@color/black_tin"
                     android:lines="3"
                     android:minLines="2"
                     android:inputType="textMultiLine"/>
@@ -257,7 +271,10 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="5dp"
                 android:background="@drawable/button_background"
-                android:text="SignUp" />
+                android:text="SignUp"
+                android:textSize="@dimen/cast_name"
+                android:textStyle="bold"
+                android:textColor="@color/black_tin"/>
             <!--For edit item so users can see the whole layout-->
             <View
                 android:id="@+id/view_edit"

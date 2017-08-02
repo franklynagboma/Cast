@@ -66,8 +66,6 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
     @BindView(R.id.cast_dob)
     TextView castDob;
 
-    @BindView(R.id.mobile_details)
-    TextView mobileText;
     @BindView(R.id.mobile_number)
     TextView castMobile;
     @BindView(R.id.phone_call)
@@ -75,17 +73,23 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
     @BindView(R.id.sms)
     ImageView sms;
 
-    @BindView(R.id.email)
-    TextView emailText;
     @BindView(R.id.cast_email)
     TextView castEmail;
     @BindView(R.id.mail_message)
     ImageView mail;
 
-    @BindView(R.id.summary)
-    TextView summaryText;
     @BindView(R.id.cast_summary)
     TextView castSummary;
+
+    //info text view
+    @BindView(R.id.summary)
+    TextView summaryText;
+    @BindView(R.id.mobile_details)
+    TextView mobileDetails;
+    @BindView(R.id.email_detail)
+    TextView emailDetails;
+    @BindView(R.id.cousant)
+    TextView cousantDetails;
 
     public DetailsFragment() {}
 
@@ -185,6 +189,9 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
                     toEmail = email;
                     toNumber = mobile;
 
+                    mobileDetails.setTypeface(AppController.getDroidFace(context));
+                    emailDetails.setTypeface(AppController.getDroidFace(context));
+
                     //for Tab to not through null because this Fragment starts as the Activity does
                     //base on MVC pathern.
                     imageHolder.setBackgroundResource(itemPosition != 0
@@ -195,8 +202,11 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
                             .error(R.mipmap.ic_cast_person)
                             .into(castImage);
                     castName.setText(name);
+                    castName.setTypeface(AppController.getDroidFace(context));
                     castTitle.setText(title);
+                    castTitle.setTypeface(AppController.getProximaFace(context));
                     castGender.setText(gender);
+                    castGender.setTypeface(AppController.getProximaFace(context));
 
                     //if this fragment was access by the device owner
                     if(user) {
@@ -214,11 +224,15 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
                                 && getShowDob.equals(getString(R.string.every_one))
                                 ? getResources().getString(R.string.dob,dob) : "");
                     }
+                    castDob.setTypeface(AppController.getProximaFace(context));
 
                     //remove the condition here, make condition before send to detail fragment.
                     castMobile.setText(editUserMobile(mobile));
+                    castMobile.setTypeface(AppController.getProximaFace(context));
                     castEmail.setText(email);
+                    castEmail.setTypeface(AppController.getProximaFace(context));
                     castSummary.setText(summary);
+                    castSummary.setTypeface(AppController.getProximaFace(context));
 
                     //perform text editing and design
                     performTextEditDesign(gender);
@@ -264,8 +278,7 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
         //for other users only
         if(!user) {
             Intent intent = new Intent(Intent.ACTION_SENDTO);
-            intent.setData(Uri.parse("mailto:"));
-            intent.putExtra(Intent.EXTRA_EMAIL, toEmail);
+            intent.setData(Uri.parse("mailto:" +toEmail));
             intent.putExtra(Intent.EXTRA_SUBJECT, CAST_SUBJECT);
             if(intent.resolveActivity(getActivity().getPackageManager()) != null) {
                 sendToast("mail...");
@@ -282,9 +295,13 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                if(null == context)
+                    context = getActivity();
                 //hind cast profile layout and show Cousant profile layout
                 castProfile.setVisibility(View.INVISIBLE);
+                cousantDetails.setTypeface(AppController.getDroidFace(context));
                 aboutCousant.setText(summary != null && !summary.isEmpty() ?summary :"Cousant");
+                aboutCousant.setTypeface(AppController.getProximaFace(context));
                 cousantProfile.setVisibility(View.VISIBLE);
             }
         }, 100);
