@@ -5,75 +5,70 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
-    android:background="@color/cast_background"
+    android:background="@drawable/front_ground"
     android:gravity="center"
     android:weightSum="100">
     <FrameLayout
         android:layout_width="0dp"
         android:layout_weight="80"
         android:layout_height="wrap_content">
-        <android.support.v7.widget.CardView
-            android:id="@+id/card_reg"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="2dp"
-            app:cardElevation="5dp">
-            <RelativeLayout
+            android:layout_height="wrap_content">
+            <FrameLayout
+                android:id="@+id/sign_in_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <FrameLayout
-                    android:id="@+id/sign_in_layout"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true">
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerInParent="true">
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    android:orientation="vertical"
+                    android:layout_gravity="center">
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
                         android:layout_gravity="center">
-                        <RelativeLayout
+                        <com.google.android.gms.common.SignInButton
+                            android:id="@+id/sign_in"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                        <!--progressBar load-->
+                        <ProgressBar
+                            android:id="@+id/circular_progress_bar"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center">
-                            <com.google.android.gms.common.SignInButton
-                                android:id="@+id/sign_in"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content" />
-                            <!--progressBar load-->
-                            <ProgressBar
-                                android:id="@+id/circular_progress_bar"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:indeterminate="false"
-                                android:layout_centerInParent="true"
-                                android:visibility="gone"/>
-                        </RelativeLayout>
-                        <android.support.v7.widget.AppCompatButton
-                            android:id="@+id/guess_button"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="20dp"
-                            android:layout_gravity="center_horizontal"
-                            android:text="Guest"
-                            android:textSize="13sp"
-                            android:background="@drawable/button_background"/>
-                    </LinearLayout>
-                </FrameLayout>
+                            android:indeterminate="false"
+                            android:layout_centerInParent="true"
+                            android:visibility="gone"/>
+                    </RelativeLayout>
+                    <android.support.v7.widget.AppCompatButton
+                        android:id="@+id/guess_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:layout_gravity="center_horizontal"
+                        android:text="Guest"
+                        android:textSize="@dimen/cast_name"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/white"
+                        android:background="@drawable/button_background"/>
+                </LinearLayout>
+            </FrameLayout>
 
-                <FrameLayout
-                    android:id="@+id/sign_up_layout"
+            <FrameLayout
+                android:id="@+id/sign_up_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone">
+                <fragment
+                    android:id="@+id/complete_sign_up_fragment"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone">
-                    <fragment
-                        android:id="@+id/complete_sign_up_fragment"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        tools:layout="@layout/fragment_signup_complete"
-                        android:name="com.androidtecknowlogy.tym.cast.complete_signup.fragment.CompleteSignUpFragment"/>
-                </FrameLayout>
-            </RelativeLayout>
-        </android.support.v7.widget.CardView>
+                    android:layout_height="match_parent"
+                    tools:layout="@layout/fragment_signup_complete"
+                    android:name="com.androidtecknowlogy.tym.cast.complete_signup.fragment.CompleteSignUpFragment"/>
+            </FrameLayout>
+        </RelativeLayout>
     </FrameLayout>
 
 </LinearLayout>
