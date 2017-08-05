@@ -5,6 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Build;
+import android.support.design.widget.Snackbar;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.androidtecknowlogy.tym.cast.R;
 import com.androidtecknowlogy.tym.cast.helper.io.ConnectionReceiver;
@@ -86,6 +92,52 @@ public class AppController extends Application {
                 .requestEmail()
                 .build();
         return gso;
+    }
+
+    public void toastMsg (Context context, String msg) {
+        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+    }
+    public void snackMsg (LayoutInflater inflater, View proposed,
+                           Context context, String msg, String iconType, String length) {
+        Snackbar snackbar = Snackbar.make(proposed.getRootView(), "",
+                length.equals("long")?Snackbar.LENGTH_LONG :Snackbar.LENGTH_SHORT);
+        //get snack bar view and customize with snackbar_layout.
+        Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
+        //hide snack bar fix text view layout
+        ((TextView) layout.findViewById(android.support.design.R.id.snackbar_text))
+                .setVisibility(View.INVISIBLE);
+        //attack view
+        View snackView = inflater.inflate(R.layout.snackbar_layout, null, false);
+        TextView textView = (TextView) snackView.findViewById(R.id.snack_text);
+        textView.setTypeface(AppController.getProximaFace(context));
+        ImageView imageView = (ImageView) snackView.findViewById(R.id.snack_image);
+        TextView settingBtn = (TextView) snackView.findViewById(R.id.snack_btn);
+        settingBtn.setTypeface(AppController.getDroidFace(context));
+        settingBtn.setVisibility(View.INVISIBLE);
+
+        if(iconType.equalsIgnoreCase("info"))
+            imageView.setImageResource(R.drawable.info);
+        if(iconType.equalsIgnoreCase("wifi")) {
+            imageView.setImageResource(R.drawable.wifi);
+            //text settings onClick.
+            settingBtn.setVisibility(View.VISIBLE);
+            settingBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(android.provider.Settings.ACTION_SETTINGS);
+                    if(intent.resolveActivity(getPackageManager()) != null)
+                        startActivity(intent);
+                }
+            });
+        }
+        textView.setText(msg);
+
+        //set on click for network setting.
+        //show custom snack bar.
+        layout.addView(snackView);
+        layout.setBackgroundResource(R.color.colorPrimary);
+        snackbar.show();
+
     }
 
     //set up fonts for text.

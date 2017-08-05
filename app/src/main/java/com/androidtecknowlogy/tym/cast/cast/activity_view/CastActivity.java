@@ -60,8 +60,6 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
 
     private SharedPreferences pref;
     private SharedPreferences.Editor prefEdit;
-    private final String toCousantEmail = "franklyn1great@gmail.com";
-    private final String toCousantNumber = "08068046013";
     public static int orientation;
     private CustomBottomNavigationView bottomNavigationView;
     //private BottomNavigationView bottomNavigationView;
@@ -178,6 +176,7 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
 
         setSupportActionBar(toolbar);
 
+
         bottomNavigationView = (CustomBottomNavigationView)
                 findViewById(R.id.bottom_nav);
         if(!isTab) {
@@ -218,6 +217,7 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
         //check if it from tab then, hide the detail fragment
         menuCheck = false;
         quit = false;
+        toolbar.setTitle(getString(R.string.app_name));
 
         if(isTab)
             detailsFrame.setVisibility(View.VISIBLE);
@@ -235,6 +235,7 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
         //call detailsFragment for mobile devices.
         menuCheck = true;
         quit = false;
+        toolbar.setTitle(getString(R.string.profile));
 
         if(!isTab)
             getSupportFragmentManager().beginTransaction()
@@ -249,8 +250,7 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
         castUserToDetailFragment.CastSendUsersToDetailFragment(pref.getString("image", ""),
                 pref.getString("name", ""), pref.getString("title", ""),
                 pref.getString("dob", ""),pref.getString("gender", ""),
-                !AppController.isGuest ?pref.getString("mobile", "") :toCousantNumber,
-                !AppController.isGuest ?pref.getString("email", "") :toCousantEmail,
+                pref.getString("mobile", ""), pref.getString("email", ""),
                 !AppController.isGuest ?pref.getString("summary","")
                         : getString(R.string.large_text) );
 
@@ -289,6 +289,7 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
         //check if it from tab then, hide the detail fragment
         menuCheck = false;
         quit = false;
+        toolbar.setTitle(getString(R.string.action_settings));
 
         if(isTab)
             detailsFrame.setVisibility(View.GONE);
@@ -560,13 +561,16 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem menuItem = menu.findItem(R.id.action_edit);
 
-        //check if user is a guess
+        //check if user is a not guest.
         if(!AppController.isGuest) {
             if(menuCheck)
                 menuItem.setVisible(true);
             else
                 menuItem.setVisible(false);
         }
+        //hide logout on guest mode.
+        else
+            menu.findItem(R.id.action_logout).setVisible(false);
 
         return true;
     }

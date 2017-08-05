@@ -18,4 +18,7 @@
     <color name="fab_dark_view">#CCBDBDBD</color>
     <color name="yellow">#FFEB3B</color>
     <color name="brown">#795548</color>
+
+    <!--Transparent overflow background-->
+    <color name="primary_light">#8C00897B</color>
 </resources>

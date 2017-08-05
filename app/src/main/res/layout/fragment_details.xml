@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/item_color">
+    android:background="@color/primary_light">
 
     <LinearLayout
         android:id="@+id/cousant_profile"
@@ -20,7 +20,7 @@
             android:text="@string/cousant"
             android:layout_gravity="center_horizontal"
             android:textStyle="bold"
-            android:textColor="@color/black_tin"
+            android:textColor="@android:color/white"
             android:textSize="@dimen/cousant"/>
         <ScrollView
             android:layout_width="match_parent"
@@ -33,7 +33,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
-                android:textColor="@color/black_tin"
+                android:textColor="@android:color/white"
                 android:textSize="@dimen/about_cousant"/>
         </ScrollView>
     </LinearLayout>
@@ -75,7 +75,7 @@
                     android:layout_marginBottom="2dp"
                     android:textSize="@dimen/cast_name"
                     android:textStyle="bold"
-                    android:textColor="@color/black_tin"/>
+                    android:textColor="@android:color/white"/>
                 <TextView
                     android:id="@+id/cast_title"
                     android:layout_below="@+id/cast_name"
@@ -84,7 +84,7 @@
                     android:layout_marginBottom="2dp"
                     android:textSize="@dimen/cast_gender_title"
                     android:textStyle="bold"
-                    android:textColor="@color/black_tin"/>
+                    android:textColor="@android:color/white"/>
                 <TextView
                     android:id="@+id/cast_gender"
                     android:layout_below="@+id/cast_title"
@@ -93,7 +93,7 @@
                     android:layout_marginBottom="2dp"
                     android:textSize="@dimen/cast_gender_title"
                     android:textStyle="bold"
-                    android:textColor="@color/black_tin"/>
+                    android:textColor="@android:color/white"/>
                 <TextView
                     android:id="@+id/cast_dob"
                     android:layout_width="wrap_content"
@@ -101,7 +101,7 @@
                     android:layout_below="@+id/cast_gender"
                     android:textSize="@dimen/cast_join"
                     android:textStyle="bold"
-                    android:textColor="@color/colorPrimary" />
+                    android:textColor="@android:color/white" />
             </RelativeLayout>
         </LinearLayout>
 
@@ -292,7 +292,7 @@
                 android:layout_centerHorizontal="true"
                 android:textSize="@dimen/cast_name"
                 android:textStyle="bold"
-                android:textColor="@color/black_tin"/>
+                android:textColor="@android:color/white"/>
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -304,7 +304,7 @@
                     android:padding="10dp"
                     android:textSize="@dimen/cast_gender_title"
                     android:textStyle="bold"
-                    android:textColor="@color/black_tin"/>
+                    android:textColor="@android:color/white"/>
             </ScrollView>
         </RelativeLayout>
     </LinearLayout>

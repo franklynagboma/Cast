@@ -20,6 +20,11 @@ import android.widget.Toast;
 
 import com.androidtecknowlogy.tym.cast.R;
 import com.androidtecknowlogy.tym.cast.app.AppController;
+import com.androidtecknowlogy.tym.cast.helper.io.ConnectionReceiver;
+import com.androidtecknowlogy.tym.cast.helper.pojo.Settings;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 /**
  * Created by AGBOMA franklyn on 7/27/17.
@@ -60,15 +65,13 @@ public class SettingsFragment extends PreferenceFragment
         listPreference2 = (ListPreference)
                 findPreference(getString(R.string.pref_cast_list_key));
         //if use is guess remove preference listPreference1
-        if(AppController.isGuest)
+        if(AppController.isGuest) {
+            listPreference1.setSummary(null);
             listPreference1.setEnabled(false);
+        }
 
         //set up summary from previous values
-        if (AppController.settingMap.containsKey(castEmail))
-            listPreference1.setSummary(AppController.settingMap.get(castEmail).getShowDob());
-        //user just lunch the application for the first time.
-        else
-            listPreference1.setValue(null);
+        getPreviousSettings("");
 
         //get values from preference
         getListPreferenceValues();
@@ -125,20 +128,22 @@ public class SettingsFragment extends PreferenceFragment
             //changeListPreference(preference, value, 1);
             //get preference to list
             ListPreference listPreference = (ListPreference) preference;
-            //get index checked.
-            int prefIndex = listPreference.findIndexOfValue(value);
-            //set checked summary.
-            if(prefIndex >= 0) {
-                preference.setSummary(listPreference.getEntries()[prefIndex]);
+            if(checkConnection()) {
+                //get index checked.
+                int prefIndex = listPreference.findIndexOfValue(value);
+                //set checked summary.
+                if(prefIndex >= 0) {
+                    preference.setSummary(listPreference.getEntries()[prefIndex]);
 
-                if(listPreference == findPreference(getString(R.string.pref_list_key))) {
-                    if(!preference.getSummary().toString().equals(previousValue1))
-                        savePreference(listPreference.getTitle().toString(), value);
-                }
+                    if(listPreference == findPreference(getString(R.string.pref_list_key))) {
+                        if(!preference.getSummary().toString().equals(previousValue1))
+                            savePreference(listPreference.getTitle().toString(), value);
+                    }
                 /*else if(listPreference == findPreference(getString(R.string.pref_cast_list_key))) {
                     if(!preference.getSummary().toString().equals(previousValue2))
                         savePreference(listPreference.getTitle().toString(), value);
                 }*/
+                }
             }
         }
 
@@ -168,19 +173,14 @@ public class SettingsFragment extends PreferenceFragment
                                         getString(R.string.pref_list_key)));
                                 bindPreferenceSummaryToView(findPreference(
                                         getString(R.string.pref_cast_list_key)));
-                                //update online db.
-                                AppController.settingsData.child(listPreference1.getTitle().toString())
-                                        .setValue(getValue1);
-                                AppController.settingsData.child(listPreference2.getTitle().toString())
-                                        .setValue(getValue2);
                                 dialog.dismiss();
-                                startLoading("");
-                                savePreference(listPreference1.getTitle().toString(), getValue1);
-                                stopLoading();
+                                if(checkConnection()) {
+                                    startLoading("");
+                                    savePreference(listPreference1.getTitle().toString(), getValue1);
+                                }
                             }
                             else
-                                Toast.makeText(getActivity(), "wrong password", Toast.LENGTH_SHORT)
-                                        .show();
+                                AppController.getInstance().toastMsg(getActivity(),"wrong password");
                         }
                     })
                     .setNegativeButton("Abort", new DialogInterface.OnClickListener() {
@@ -229,23 +229,76 @@ public class SettingsFragment extends PreferenceFragment
     }
 
     private void savePreference(String key, String value) {
-        //change key name so as to relate with Settings pojo.
-        if(key.equals(getString(R.string.pref_list_title)))
-            key = AppController.SHOW_DOB;
-        if(key.equals(getString(R.string.pref_cast_list_title)))
-            key = AppController.CAST_UPDATE;
+        if(checkConnection()) {
+            //change key name so as to relate with Settings pojo.
+            if(key.equals(getString(R.string.pref_list_title)))
+                key = AppController.SHOW_DOB;
+            if(key.equals(getString(R.string.pref_cast_list_title)))
+                key = AppController.CAST_UPDATE;
 
-        //update online db.
-        startLoading(value);
-        AppController.settingsData
-                .child(castEmail)
-                .child(key)
-                .setValue(value);
-        stopLoading();
-        getListPreferenceValues();
+            //update online db.
+            startLoading(value);
+            AppController.settingsData
+                    .child(castEmail)
+                    .child(key)
+                    .setValue(value);
+            checkDataChange();
+            getListPreferenceValues();
+        }
     }
     private void getListPreferenceValues() {
         previousValue1 = listPreference1.getValue();
         previousValue2 = listPreference2.getValue();
+    }
+
+    private void checkDataChange() {
+        AppController.settingsData.child(castEmail).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot != null){
+                    Log.i(LOG_TAG, "key: " + dataSnapshot.getKey());
+                    if(castEmail.equals(dataSnapshot.getKey()))
+                        stopLoading();
+                    else
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                stopLoading();
+                                getPreviousSettings("Error uploading settings");
+                            }
+                        }, 8000);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                stopLoading();
+                AppController.getInstance().toastMsg(getActivity(),
+                        "Error! check internet connection");
+            }
+        });
+    }
+
+    private void getPreviousSettings(String msg) {
+
+        if (AppController.settingMap.containsKey(castEmail))
+            listPreference1.setSummary(AppController.settingMap.get(castEmail).getShowDob());
+            //user just lunch the application for the first time.
+        else {
+            listPreference1.setSummary(getString(R.string.every_one));
+            listPreference1.setValue(null);
+        }
+
+        if(!msg.isEmpty())
+            AppController.getInstance().toastMsg(getActivity(), msg);
+    }
+
+    private boolean checkConnection() {
+        boolean getConnected = ConnectionReceiver.isConnected();
+        if(!getConnected)
+            AppController.getInstance().snackMsg(getActivity().getLayoutInflater(),getView(),
+                    getActivity(),"Check internet connection","wifi","long");
+
+        return getConnected;
     }
 }

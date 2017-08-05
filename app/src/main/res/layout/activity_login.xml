@@ -1,34 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_vertical"
-    android:weightSum="100">
+    android:background="@drawable/cast_background">
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="50"
-        android:layout_marginLeft="20dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginEnd="20dp">
-        <ScrollView
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/primary_light"
+        android:gravity="center_vertical"
+        android:weightSum="100">
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp">
+            android:layout_height="0dp"
+            android:layout_weight="50"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginEnd="20dp">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
+                android:padding="16dp"
                 android:orientation="vertical">
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/black_gone"/>
                 <android.support.v7.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -44,8 +41,8 @@
                             android:background="@color/item_color"
                             android:padding="2dp">
                             <ImageView
-                                android:layout_width="40dp"
-                                android:layout_height="40dp"
+                                android:layout_width="@dimen/profile_image_size"
+                                android:layout_height="@dimen/profile_image_size"
                                 android:scaleType="centerCrop"
                                 android:src="@drawable/ic_email_black_24dp"/>
                         </FrameLayout>
@@ -54,6 +51,10 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:inputType="textWebEmailAddress"
+                            android:textSize="@dimen/cast_gender_title"
+                            android:textStyle="bold"
+                            android:textColor="@color/black_tin"
+                            android:background="@android:color/transparent"
                             android:padding="4dp"/>
                         <android.support.design.widget.TextInputLayout
                             android:id="@+id/input_email"
@@ -65,16 +66,16 @@
                     </LinearLayout>
                 </android.support.v7.widget.CardView>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/black_gone"
-                    android:layout_marginTop="10dp"/>
                 <android.support.v7.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:cardElevation="2dp"
-                    android:layout_margin="2dp">
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginRight="2dp"
+                    android:layout_marginEnd="2dp"
+                    android:layout_marginBottom="2dp">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -85,8 +86,8 @@
                             android:background="@color/item_color"
                             android:padding="2dp">
                             <ImageView
-                                android:layout_width="40dp"
-                                android:layout_height="40dp"
+                                android:layout_width="@dimen/profile_image_size"
+                                android:layout_height="@dimen/profile_image_size"
                                 android:scaleType="centerCrop"
                                 android:src="@drawable/ic_lock_black_24dp"/>
                         </FrameLayout>
@@ -101,6 +102,10 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:inputType="textPassword"
+                                android:textSize="@dimen/cast_gender_title"
+                                android:textStyle="bold"
+                                android:textColor="@color/black_tin"
+                                android:background="@android:color/transparent"
                                 android:padding="4dp"/>
                         </android.support.design.widget.TextInputLayout>
                     </LinearLayout>
@@ -112,27 +117,32 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/action_log_in"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/cast_name"
+                    android:textStyle="bold"
                     android:background="@drawable/button_background"/>
             </LinearLayout>
-        </ScrollView>
-    </FrameLayout>
+        </FrameLayout>
 
-    <LinearLayout
-        android:id="@+id/user_not_reg"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="5dp"
-        android:padding="10dp">
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/user_not_reg"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/colorAccent"
-            android:layout_gravity="center"
-            android:padding="10dp"
-            android:text="@string/not_sign_up"
-            android:textSize="13sp"
-            style="@android:style/TextAppearance.Medium" />
+            android:orientation="vertical"
+            android:layout_marginTop="5dp"
+            android:padding="10dp">
+            <TextView
+                android:id="@+id/not_reg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:padding="10dp"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/not_sign_up"
+                android:textStyle="bold"
+                android:textSize="@dimen/cast_name"
+                style="@android:style/TextAppearance.Medium" />
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

@@ -126,7 +126,7 @@ public class GoogleSignInActivity extends AppCompatActivity{
                 .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
                     @Override
                     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                        Log.e(LOG_TAG, " onConnnectionFailed");
+                        Log.e(LOG_TAG, " onConnectionFailed");
                         Toast.makeText(getApplicationContext(), "Fails, Check internet connection.",
                                 Toast.LENGTH_SHORT).show();
                     }
@@ -245,7 +245,8 @@ public class GoogleSignInActivity extends AppCompatActivity{
         Log.i(LOG_TAG, "sign in clicked");
         if(!ConnectionReceiver.isConnected()) {
             setProgressBar(false);
-            snackMsg("Check internet connection","wifi","long");
+            AppController.getInstance().snackMsg(getLayoutInflater(), signInButton, this,
+                    "Check internet connection","wifi","long");
         }
         else {
             setProgressBar(true);
@@ -257,7 +258,8 @@ public class GoogleSignInActivity extends AppCompatActivity{
     public void onGuessClicked () {
         AppController.isGuest = true;
         if(!ConnectionReceiver.isConnected())
-            snackMsg("Check internet connection","wifi","long");
+            AppController.getInstance().snackMsg(getLayoutInflater(), signInButton, this,
+                    "Check internet connection","wifi","long");
         else
             startNextActivity("castActivity");
     }
@@ -282,6 +284,8 @@ public class GoogleSignInActivity extends AppCompatActivity{
     }
 
     private void signIn() {
+        //set Guest to false if user still on app without close accessed signIn after guest
+        AppController.isGuest = false;
         Intent intent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
         startActivityForResult(intent, RC_SIGN_IN);
     }
@@ -297,6 +301,7 @@ public class GoogleSignInActivity extends AppCompatActivity{
         if(authStateListener != null)
             authFirebase.removeAuthStateListener(authStateListener);
     }
+
 
     private void restoreSignInProcess() {
         //call fire base authentication sign out
@@ -326,14 +331,15 @@ public class GoogleSignInActivity extends AppCompatActivity{
                         if(!task.isSuccessful()) {
                             Log.e(LOG_TAG, task.getException().toString());
                             Log.e(LOG_TAG, "Authentication fails");
-                            toastMsg("Authentication fails");
+                            AppController.getInstance().toastMsg(GoogleSignInActivity.this,
+                                    "Authentication fails");
                         }
                     }
                 });
         /*//check if email account is cousant's mail.
         if(!account.getEmail().contains("@cousant.com")) {
             restoreSignInProcess();
-            snackMsg("Use Cousant mail.","info", "long");
+            AppController.getInstance().snackMsg(getLayoutInflater(), signInButton, this,"Use Cousant mail.","info", "long");
         }
         else {
             startLoading("Cousant signIn", "loading Gmail data...");
@@ -347,7 +353,8 @@ public class GoogleSignInActivity extends AppCompatActivity{
                             if(!task.isSuccessful()) {
                                 Log.e(LOG_TAG, task.getException().toString());
                                 Log.e(LOG_TAG, "Authentication fails");
-                                toastMsg("Authentication fails");
+                                AppController.getInstance().toastMsg(GoogleSignInActivity.this,
+                                "Authentication fails");
                             }
                         }
                     });
@@ -371,20 +378,17 @@ public class GoogleSignInActivity extends AppCompatActivity{
             }
             else {
                 setProgressBar(false);
-                snackMsg("Check internet connection","wifi","long");
+                AppController.getInstance().snackMsg(getLayoutInflater(), signInButton, this,
+                        "Check internet connection","wifi","long");
             }
         }
         else {
             setProgressBar(false);
-            toastMsg("Sign in with Cousant mail.");
+            AppController.getInstance().toastMsg(this,"Sign in with Cousant mail.");
         }
     }
 
-    private void toastMsg (String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-    }
-
-    private void snackMsg (String msg, String iconType,String length) {
+    /*private void snackMsg (Context context,String msg, String iconType,String length) {
         Snackbar snackbar = Snackbar.make(signInButton.getRootView(), "",
                 length.equals("long")?Snackbar.LENGTH_LONG :Snackbar.LENGTH_SHORT);
         //get snack bar view and customize with snackbar_layout.
@@ -424,7 +428,7 @@ public class GoogleSignInActivity extends AppCompatActivity{
         layout.setBackgroundResource(R.color.colorPrimary);
         snackbar.show();
 
-    }
+    }*/
 
     @Override
     public void onBackPressed() {

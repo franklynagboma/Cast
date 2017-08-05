@@ -172,9 +172,25 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
                              final String summary) {
 
         String[] getEmailOffDot = email.split("\\.");
+        String getAll = "";
+        /**
+         * Note, some emails may contain more then one dot at the ending
+         * eg: name.name@gmail.com
+         * Therefore check for this condition with the length of getEmailOffDot.
+         */
         //check if user has changed the settings on their devices
-        if (AppController.settingMap.containsKey(getEmailOffDot[0]))
-            getSettingsChangedVariables(getEmailOffDot[0]);
+        if(getEmailOffDot.length > 1){
+            //get all without the last one.
+            for(int count =0; count <(getEmailOffDot.length -1); count ++)
+                getAll = getAll + getEmailOffDot[count];
+
+            if (AppController.settingMap.containsKey(getAll))
+                getSettingsChangedVariables(getAll);
+        }
+        else {
+            if (AppController.settingMap.containsKey(getEmailOffDot[0]))
+                getSettingsChangedVariables(getEmailOffDot[0]);
+        }
 
         //delay to show details
         new Handler().postDelayed(new Runnable() {
@@ -232,7 +248,7 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
                     castEmail.setText(email);
                     castEmail.setTypeface(AppController.getProximaFace(context));
                     castSummary.setText(summary);
-                    castSummary.setTypeface(AppController.getProximaFace(context));
+                    castSummary.setTypeface(AppController.getDroidFace(context));
 
                     //perform text editing and design
                     performTextEditDesign(gender);
@@ -301,7 +317,7 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
                 castProfile.setVisibility(View.INVISIBLE);
                 cousantDetails.setTypeface(AppController.getDroidFace(context));
                 aboutCousant.setText(summary != null && !summary.isEmpty() ?summary :"Cousant");
-                aboutCousant.setTypeface(AppController.getProximaFace(context));
+                aboutCousant.setTypeface(AppController.getDroidFace(context));
                 cousantProfile.setVisibility(View.VISIBLE);
             }
         }, 100);
@@ -323,8 +339,8 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
         String firstThree = mobile.substring(1,4);//first 3
         String secondThree = mobile.substring(4,7);//second 3
         String thirdThree = mobile.substring(7);//last 4
-        //get all and set EditText
-        getMobile = firstThree +" - "+ secondThree +" - "+ thirdThree;
+        //get all with Nigeria country code and set EditText.
+        getMobile = "+234 - " + firstThree +" - "+ secondThree +" - "+ thirdThree;
         return  getMobile;
     }
     private void getSettingsChangedVariables(String emailNoDot) {
@@ -341,5 +357,6 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
         String summaryIntro = "Why is " + (getGender.equalsIgnoreCase("male") ?"he":"she")
                 +" considered to be the best?";
         summaryText.setText(summaryIntro);
+        summaryText.setTypeface(AppController.getDroidFace(getActivity()));
     }
 }

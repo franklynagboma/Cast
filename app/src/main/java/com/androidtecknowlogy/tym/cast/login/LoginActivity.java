@@ -9,7 +9,9 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androidtecknowlogy.tym.cast.R;
@@ -35,16 +37,21 @@ public class LoginActivity extends AppCompatActivity {
 
     private final String LOG_TAG = LoginActivity.class.getSimpleName();
 
-    private GoogleApiClient googleApiClient;
     private SharedPreferences pref;
     private SharedPreferences.Editor prefEdit;
     private String getEmail, getPassword;
+    private GoogleApiClient googleApiClient;
+    private final String USERS_VALUE = "users_password";
     @BindView(R.id.cast_email)
     EditText castEmail;
     @BindView(R.id.cast_password)
     EditText castPassword;
     @BindView(R.id.input_password)
     TextInputLayout inputLayout;
+    @BindView(R.id.btn_login)
+    Button loginBtn;
+    @BindView(R.id.not_reg)
+    TextView notReg;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,18 +64,30 @@ public class LoginActivity extends AppCompatActivity {
         getEmail = pref.getString("email", "");
         getPassword = pref.getString("password","");
 
-        //client to access the google sign in api
         googleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
                     @Override
                     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                        Log.e(LOG_TAG, " onConnnectionFailed");
-                        Toast.makeText(getApplicationContext(), "Fails, Check internet connection.",
-                                Toast.LENGTH_SHORT).show();
+                        Log.e(LOG_TAG, " onConnectionFailed");
+                        AppController.getInstance().toastMsg(LoginActivity.this,
+                                "Fails, Check internet connection.");
                     }
                 })
                 .addApi(Auth.GOOGLE_SIGN_IN_API, AppController.getInstance().googleSignInOptions())
                 .build();
+    }
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(USERS_VALUE, castPassword.getText().toString());
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        castPassword.setText(savedInstanceState.getString(USERS_VALUE));
     }
 
     @Override
@@ -78,6 +97,11 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void init() {
+        //set font type
+        castEmail.setTypeface(AppController.getProximaFace(this));
+        castPassword.setTypeface(AppController.getProximaFace(this));
+        loginBtn.setTypeface(AppController.getDroidFace(this));
+        notReg.setTypeface(AppController.getDroidFace(this));
         //setting up text area.
         castEmail.setEnabled(false);
         castEmail.setText(getEmail);
@@ -88,7 +112,7 @@ public class LoginActivity extends AppCompatActivity {
         String getTextPassword = castPassword.getText().toString();
 
         if(!getTextPassword.equals(getPassword))
-            Toast.makeText(this, "Wrong password", Toast.LENGTH_SHORT).show();
+            AppController.getInstance().toastMsg(this,"Wrong password");
         else {
             //save user login
             prefEdit = pref.edit();
@@ -100,36 +124,41 @@ public class LoginActivity extends AppCompatActivity {
 
     @OnClick(R.id.user_not_reg)
     public void onUserNotRegClicked() {
-        //sign out user first to refresh sign up state.
+        //sign out user first
         signOut();
     }
 
     private void signOut() {
-        //call fire base authentication sign out
         FirebaseAuth.getInstance().signOut();
         Auth.GoogleSignInApi.signOut(googleApiClient)
                 .setResultCallback(new ResultCallback<Status>() {
                     @Override
                     public void onResult(@NonNull Status status) {
-                        //set preference saved to empty.
-                        prefEdit = pref.edit();
-                        prefEdit.putBoolean(Intent.EXTRA_TEXT, false);
-                        prefEdit.putBoolean("login", false);
-                        prefEdit.putString("uid", "");
-                        prefEdit.putString("image", "");
-                        prefEdit.putString("email", "");
-                        prefEdit.putString("name", "");
-                        prefEdit.putString("password", "");
-                        prefEdit.putString("gender", "");
-                        prefEdit.putString("dob", "");
-                        prefEdit.putString("mobile", "");
-                        prefEdit.putString("title", "");
-                        prefEdit.putString("summary", "");
-                        prefEdit.apply();
-                        startActivity("googleActivity");
+                        //check is the status is not successful,the recall method.
+                        if(!status.isSuccess())
+                            signOut();
+                        else {
+                            prefEdit = pref.edit();
+                            prefEdit.putBoolean(Intent.EXTRA_TEXT, false);
+                            prefEdit.putBoolean("login", false);
+                            prefEdit.putString("uid", "");
+                            prefEdit.putString("image", "");
+                            prefEdit.putString("email", "");
+                            prefEdit.putString("name", "");
+                            prefEdit.putString("password", "");
+                            prefEdit.putString("gender", "");
+                            prefEdit.putString("dob", "");
+                            prefEdit.putString("mobile", "");
+                            prefEdit.putString("title", "");
+                            prefEdit.putString("summary", "");
+                            prefEdit.apply();
+                            //call google activity for user to do as which.
+                            startActivity("googleActivity");
+                        }
                     }
                 });
     }
+
 
     private void startActivity(String activity) {
         this.finish();

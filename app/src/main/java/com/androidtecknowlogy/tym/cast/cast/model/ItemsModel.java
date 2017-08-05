@@ -27,6 +27,7 @@ public class ItemsModel {
     private Context context;
     private ValueEventListener valueEventListener;
     private ProgressDialog loading;
+    private final String MUST_CONTAIN = "@";//change this to @cousant
 
     public ItemsModel(Context context) {
         //progress dialog
@@ -50,7 +51,7 @@ public class ItemsModel {
         this.itemModelToPresenter = itemModelToPresenter;
     }
 
-    public void attachedDataListener(final String userName) {
+    public void attachedDataListener(final String userEmail) {
         //showProgress("Cast","Loading....");
 
         if(valueEventListener == null) {
@@ -69,7 +70,9 @@ public class ItemsModel {
                                 //check which map class was seen.
                                 String getKeySnap = dataSnap.getKey();
                                 //for settings map class.
-                                if (getKeySnap.contains("@gmail")) {
+                                Log.i(LOG_TAG, "settings key: " + getKeySnap);
+                                //change the below to .endWith validation.
+                                if (getKeySnap.contains(MUST_CONTAIN)) {
                                     //store settings in list
                                     Settings settings = dataSnap.getValue(Settings.class);
                                     AppController.settingMap.put(getKeySnap, settings);
@@ -78,13 +81,18 @@ public class ItemsModel {
                                     //for castItems map class.
                                     //store castItems in list
                                     CastItems castItems = dataSnap.getValue(CastItems.class);
-                                    //check the current user so as not to display
-                                    /*//check if user is guess
-                                    if(AppController.isGuess)
-                                        AppController.detailsCastItems.add(castItems);*/
-                                    // the user content on the view.
-                                    if(!userName.equalsIgnoreCase(castItems.getCastName()))
+                                    AppController.detailsCastItems.add(castItems);
+                                    /*//check the current user so as not to display
+                                    //check if user is guess
+                                    if(AppController.isGuest)
                                         AppController.detailsCastItems.add(castItems);
+                                    else {
+                                        // the user content on the view.
+                                        Log.i(LOG_TAG, "userName: " + userName
+                                                + " castName: " + castItems.getCastName());
+                                        if(!userName.equalsIgnoreCase(castItems.getCastName()))
+                                            AppController.detailsCastItems.add(castItems);
+                                    }*/
                                 }
                             }
                             //get the admin items
@@ -96,7 +104,8 @@ public class ItemsModel {
                         }
                         //dismiss dialog.
                         //stopProgress();
-                        setRecylerView();
+                        Log.i(LOG_TAG, "list size: " + AppController.detailsCastItems.size());
+                        setRecylerView(userEmail);
                     }
                 }
 
@@ -125,7 +134,37 @@ public class ItemsModel {
          */
         itemModelToPresenter.recyclerView(false);
     }
-    private void setRecylerView() {
+    private void setRecylerView(String userEmail) {
+        /**
+         * Observed that fire base returns a null value for each sync,
+         * reasons, cannot tell now but to remove the null for the list,
+         * loop through and confirm absence of null value both on guest and user.
+         */
+        for(int count =0; count <AppController.detailsCastItems.size(); count ++) {
+            CastItems cast = AppController.detailsCastItems.get(count);
+            //check the current user so as not to display
+            //check if user is guess
+            Log.i(LOG_TAG, "userEmail: " +userEmail +" email: " + cast.getCastEmail());
+            if(AppController.isGuest){
+                if(cast.getCastEmail() == null)
+                    AppController.detailsCastItems.remove(count);
+            }
+            else {
+                if(userEmail.equalsIgnoreCase(cast.getCastEmail()) || cast.getCastEmail() == null)
+                    AppController.detailsCastItems.remove(count);
+            }
+        }
+        /*if(!AppController.isGuest) {
+            //check is current user is on the list, remove not to show on item
+            //but only is not on guest mode.
+            for(int count =0; count <AppController.detailsCastItems.size(); count ++) {
+                CastItems cast = AppController.detailsCastItems.get(count);
+                Log.i(LOG_TAG, "userEmail: " +userEmail +" email: " + cast.getCastEmail());
+                if(userEmail.equalsIgnoreCase(cast.getCastEmail()) || cast.getCastEmail() == null)
+                    AppController.detailsCastItems.remove(count);
+            }
+        }*/
+
         //reload cast adapter
         Log.e(LOG_TAG, "Another ArrayListSize " + AppController.detailsCastItems.size());
         itemModelToPresenter.recyclerView(true);

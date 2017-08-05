@@ -264,6 +264,7 @@ public class CompleteSignUpFragment extends Fragment implements GoogleSignInActi
         userEventPasswordConfirm.setTypeface(AppController.getProximaFace(context));
         userDob.setTypeface(AppController.getProximaFace(context));
         userSummary.setTypeface(AppController.getProximaFace(context));
+        sendButton.setTypeface(AppController.getDroidFace(context));
 
         rg = (RadioGroup) view.findViewById(R.id.rg);
         rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -472,6 +473,7 @@ public class CompleteSignUpFragment extends Fragment implements GoogleSignInActi
                 prefEdit.putString("uid", uId);
                 prefEdit.putString("image", photo);
                 prefEdit.putString("email", email);
+                prefEdit.putBoolean("login", true);
                 prefEdit.putString("name", getMessage[0]);
                 prefEdit.putString("password", getMessage[1]);
                 prefEdit.putString("gender", getMessage[2]);

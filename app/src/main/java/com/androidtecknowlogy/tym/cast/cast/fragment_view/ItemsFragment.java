@@ -101,7 +101,6 @@ public class ItemsFragment extends Fragment implements Constant.PresenterCallsIt
         isTab = context.getResources().getBoolean(R.bool.isTab);
         orientation = getResources().getConfiguration().smallestScreenWidthDp;
         Log.i(LOG_TAG, "size sw size: " + orientation);
-
         itemAdapter = new RecyclerItemAdapter(context, AppController.detailsCastItems, isTab,
                 itemPositionToPresenter, detailsFragmentScreen);
         return view;
@@ -166,7 +165,7 @@ public class ItemsFragment extends Fragment implements Constant.PresenterCallsIt
         Log.e(LOG_TAG, "set view");
         setProgressBar(true);
         //set model data listener
-        itemPositionToPresenter.positionItemFragment(null, pref.getString("name",""), 0,1, false);
+        itemPositionToPresenter.positionItemFragment(null, pref.getString("email",""), 0,1, false);
         Log.i(LOG_TAG, "onResume attached listener");
         if(!isTab)
             recyclerView.setLayoutManager(new LinearLayoutManager(context));

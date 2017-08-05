@@ -1,5 +1,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">Cast</string>
+    <string name="detail">Cast Detail</string>
+    <string name="profile">Cast Profile</string>
     <string name="cousant">Cousant profile</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"
@@ -106,7 +108,8 @@
     <string name="action_share">Share</string>
     <string name="action_search">Search</string>
     <string name="action_new_event">Add event</string>
-    <string name="not_sign_up">Not registered? Sign Up</string>
+    <string name="not_sign_up">Not registered? SignUp</string>
+    <string name="user_have_acc">Already have an account? Login</string>
 
 
     <!-- Preference -->

@@ -26,15 +26,14 @@
                 android:layout_width="match_parent"
                 app:layout_collapseMode="pin"
                 android:background="?attr/colorPrimary"
-                app:popupTheme="@style/AppTheme.PopupOverlay" />
+                app:popupTheme="@style/AppTheme.PopupOverlay"/>
         </android.support.design.widget.AppBarLayout>
 
         <FrameLayout
             android:id="@+id/cast_item_screen"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="1dp"
-            android:layout_marginBottom="1dp" />
+            android:background="@drawable/cast_background"/>
     </LinearLayout>
     <com.androidtecknowlogy.tym.cast.helper.view.CustomBottomNavigationView
         android:id="@+id/bottom_nav"

@@ -106,6 +106,8 @@ public class RecyclerItemAdapter extends RecyclerView.Adapter<RecyclerItemAdapte
         holder.castTitle.setText(castItems.getCastTitle());
         holder.castJoin.setText(castItems.getCastJoined());
 
+        Log.i(LOG_TAG, "cast name: " + castItems.getCastName());
+
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -157,7 +159,6 @@ public class RecyclerItemAdapter extends RecyclerView.Adapter<RecyclerItemAdapte
 
     class LayoutHolder extends RecyclerView.ViewHolder{
 
-        private LinearLayout layoutHolder;
         private RelativeLayout textHolder;
         private FrameLayout imageHolder;
         private ImageView castImage;
@@ -166,7 +167,6 @@ public class RecyclerItemAdapter extends RecyclerView.Adapter<RecyclerItemAdapte
         public LayoutHolder(View itemView) {
             super(itemView);
 
-            this.layoutHolder = (LinearLayout) itemView.findViewById(R.id.layout_holder);
             this.textHolder = (RelativeLayout) itemView.findViewById(R.id.text_holder);
             this.imageHolder = (FrameLayout) itemView.findViewById(R.id.image_holder);
             this.castImage = (ImageView) itemView.findViewById(R.id.cast_image);
