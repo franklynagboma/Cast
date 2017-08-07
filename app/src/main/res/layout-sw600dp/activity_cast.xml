@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:fitsSystemWindows="true"
-    android:background="@android:color/transparent"
+    android:background="@drawable/cast_background"
     tools:context="com.androidtecknowlogy.tym.cast.cast.activity_view.CastActivity">
 
     <!--try to change the image to siding image containing events;
@@ -29,22 +29,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
-        android:background="@drawable/cast_background"
+        android:background="@color/primary_light"
         android:orientation="horizontal">
-        <android.support.v7.widget.CardView
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
+        <FrameLayout
+            android:id="@+id/cast_item_screen"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1.6"
-            android:layout_margin="2dp"
-            app:cardElevation="5dp"
-            app:cardBackgroundColor="@android:color/transparent">
-            <FrameLayout
-                android:id="@+id/cast_item_screen"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-        </android.support.v7.widget.CardView>
+            android:layout_weight="1.6"/>
         <FrameLayout
             android:id="@+id/cast_details_fragment"
             android:layout_width="0dp"
@@ -89,7 +80,7 @@
             android:id="@+id/fab_profile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:fab_icon="@drawable/ic_details_white_24dp"
+            app:fab_icon="@drawable/ic_details_black_24dp"
             app:fab_colorNormal="@android:color/white"
             app:fab_title="Profile"
             app:fab_colorPressed="@color/white_tin"/>

@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.androidtecknowlogy.tym.cast.R;
@@ -85,6 +86,8 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
     private FabLayoutProcess fabLayoutProcess;
 
 
+    @BindView(R.id.relative_item_recycler)
+    RelativeLayout relative_item_recycler;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @Nullable
@@ -135,8 +138,10 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
 
 
         isTab = getResources().getBoolean(R.bool.isTab);
-        if(!isTab)
+        if(!isTab) {
+            relative_item_recycler.setBackgroundResource(R.color.primary_light);
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
         //Just Tab
         /*else
             getSupportFragmentManager().beginTransaction()
@@ -241,10 +246,18 @@ public class CastActivity extends AppCompatActivity implements ItemsFragment.Dyn
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.cast_item_screen, detailsFragment)
                     .commit();
-        else
+        else {
+            if(getSupportFragmentManager().findFragmentByTag(CAST_ITEM) == null
+                    || !getSupportFragmentManager().findFragmentByTag(CAST_ITEM).isVisible())
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.cast_item_screen, itemsFragment, CAST_ITEM)
+                        .commit();
+
+            detailsFrame.setVisibility(View.VISIBLE);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.cast_details_fragment, detailsFragment)
                     .commit();
+        }
 
         //send details to details fragment
         castUserToDetailFragment.CastSendUsersToDetailFragment(pref.getString("image", ""),

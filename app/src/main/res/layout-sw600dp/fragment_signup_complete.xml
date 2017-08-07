@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@android:color/white"
     android:padding="16dp">
     <!--tools:showIn="@layout/activity_signin"-->
     <RelativeLayout
@@ -276,4 +277,10 @@
         android:textSize="@dimen/cast_name"
         android:textStyle="bold"
         android:textColor="@color/black_tin"/>
+    <!--For edit item so users can see the whole layout-->
+    <View
+        android:id="@+id/view_edit"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:visibility="gone"/>
 </RelativeLayout>

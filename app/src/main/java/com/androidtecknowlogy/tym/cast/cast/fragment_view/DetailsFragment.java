@@ -1,12 +1,17 @@
 package com.androidtecknowlogy.tym.cast.cast.fragment_view;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,6 +48,8 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
     private String getLast10DigitWithCountryCode, toEmail, toNumber;
     private String getShowDob, getDevice;
     private final String CAST_SUBJECT = "#CAST";
+    private final int PERMISSION_CODE = 100;
+    private boolean permissionGranted;
     private String getPhoto = "" , getEmail = "", getGender = "",
             getMonth_year = "", getName = "", getMobile = "", getTitle = "";
 
@@ -260,11 +267,14 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
     @OnClick(R.id.phone_call)
     public void onPhoneCallClicked(){
         if(!user) {
-            Intent intent = new Intent(Intent.ACTION_CALL);
-            intent.setData(Uri.parse("tel:" + getLast10DigitWithCountryCode));
-            if(intent.resolveActivity(getActivity().getPackageManager()) != null) {
-                sendToast("calling...");
-                startActivity(intent);
+            requestCallPermission();
+            if(permissionGranted){
+                Intent intent = new Intent(Intent.ACTION_CALL);
+                intent.setData(Uri.parse("tel:" + getLast10DigitWithCountryCode));
+                if(intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    sendToast("calling...");
+                    startActivity(intent);
+                }
             }
         }
         else
@@ -358,5 +368,41 @@ public class DetailsFragment extends Fragment implements Constant.PresenterSendT
                 +" considered to be the best?";
         summaryText.setText(summaryIntro);
         summaryText.setTypeface(AppController.getDroidFace(getActivity()));
+    }
+
+    private void requestCallPermission() {
+        //check if the permission was not granted
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CALL_PHONE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            //show an explanation why this permission is needed
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+                    Manifest.permission.CALL_PHONE)){}
+            else {
+                ActivityCompat.requestPermissions(getActivity(),
+                        new String[]{Manifest.permission.CALL_PHONE}, PERMISSION_CODE);
+            }
+        }
+        else {
+            //permission was earlier granted.
+            permissionGranted = true;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case PERMISSION_CODE: {
+                //length of grantResults greater than 0 tells that the result for granted
+                if(grantResults.length >0 && grantResults[0] ==PackageManager.PERMISSION_GRANTED)
+                    permissionGranted = true;
+                else {
+                    permissionGranted = false;
+                    AppController.getInstance().toastMsg(getActivity(),"Call permission denied");
+                }
+            }
+        }
     }
 }

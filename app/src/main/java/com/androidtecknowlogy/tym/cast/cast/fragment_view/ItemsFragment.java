@@ -167,7 +167,8 @@ public class ItemsFragment extends Fragment implements Constant.PresenterCallsIt
         //set model data listener
         itemPositionToPresenter.positionItemFragment(null, pref.getString("email",""), 0,1, false);
         Log.i(LOG_TAG, "onResume attached listener");
-        if(!isTab)
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        /*if(!isTab)
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
         else {
             // for 7 and 10 inches Tab.
@@ -175,7 +176,7 @@ public class ItemsFragment extends Fragment implements Constant.PresenterCallsIt
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
             else
                 recyclerView.setLayoutManager(new GridLayoutManager(context, 2));
-        }
+        }*/
         recyclerView.setHasFixedSize(true);
         //set Recycler adapter
         recyclerView.setAdapter(itemAdapter);
